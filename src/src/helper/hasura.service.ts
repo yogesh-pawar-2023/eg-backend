@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';
 
 @Injectable()
-export class GeolocationService {
+export class HasuraService {
   public url = process.env.HASURA_BASE_URL;
   constructor(private readonly httpService: HttpService) {}
 
@@ -18,34 +18,20 @@ export class GeolocationService {
     }
 
     var data = {
-      query: `query SearchAttendance {
+      query: `query SearchUser {
         ${tableName}_aggregate(where:{${query}}) {
           aggregate {
             count
           }
         }
         ${tableName}(where:{${query}}) {
-          id
-          state_name
-          state_cd
-          district_name
-          district_cd
-          block_name
-          grampanchayat_name
-          village_ward_name
-          udise_block_code
+          mobile
+          aadhar_token
         }}`,
     };
 
     return await lastValueFrom(
-      this.httpService
-        .post(this.url, data, {
-          headers: {
-            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-            'Content-Type': 'application/json',
-          },
-        })
-        .pipe(map((res) => res.data)),
+      this.httpService.post(this.url, data).pipe(map((res) => res.data)),
     );
   }
 }
