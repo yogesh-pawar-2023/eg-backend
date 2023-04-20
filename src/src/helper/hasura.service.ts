@@ -31,7 +31,14 @@ export class HasuraService {
     };
 
     return await lastValueFrom(
-      this.httpService.post(this.url, data).pipe(map((res) => res.data)),
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
     );
   }
 }
