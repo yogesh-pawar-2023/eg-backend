@@ -1,26 +1,79 @@
-import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { response } from 'express';
-import { lastValueFrom, map } from 'rxjs';
+import { Body, Controller, Get, Post, Param } from '@nestjs/common';
 import { GeolocationService } from './geolocation.service';
 
-interface Cat {
-  name: string;
-  age: number;
-  breed: string;
-}
-
-@Controller('/states')
+@Controller('/locationmaster')
 export class GeolocationController {
-  public url = 'http://localhost:8080/v1/graphql';
   constructor(private geolocationService: GeolocationService) {}
 
-  // users/list API filter pagination
-  @Post('/list')
-  public async searchAttendance(@Body() request: Record<string, any>) {
-    const { filters, table_name } = request;
-    const tableName = table_name ? table_name : 'states';
+  // states list API filter pagination
+  @Post('/states')
+  public async states(@Body() request: Record<string, any>) {
+    const { filters } = request;
+    const tableName = 'address';
     const response = await this.geolocationService.findAll(tableName, filters);
+    let mappedResponse = response?.data[tableName];
+    const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      totalCount: count,
+      data: mappedResponse,
+    };
+  }
+  // districts list API filter pagination
+  @Post('/districts/:name')
+  public async districts(
+    @Param('name') name: string,
+    state_id: string,
+    @Body() request: Record<string, any>,
+  ) {
+    const tableName = 'address';
+    const response = await this.geolocationService.findAll(tableName, {
+      district_name: name,
+    });
+
+    let mappedResponse = response?.data[tableName];
+    const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      totalCount: count,
+      data: mappedResponse,
+    };
+  }
+  // blocks list API filter pagination
+  @Post('/blocks/:name')
+  public async blocks(
+    @Param('name') name: string,
+    @Body() request: Record<string, any>,
+  ) {
+    const tableName = 'address';
+    const response = await this.geolocationService.findAll(tableName, {
+      block_name: name,
+    });
+    let mappedResponse = response?.data[tableName];
+    const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      totalCount: count,
+      data: mappedResponse,
+    };
+  }
+
+  // villages list API filter pagination
+  @Post('/villages/:name')
+  public async villages(
+    @Param('name') name: string,
+    @Body() request: Record<string, any>,
+  ) {
+    const tableName = 'address';
+    const response = await this.geolocationService.findAll(tableName, {
+      village_ward_name: name,
+    });
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 
