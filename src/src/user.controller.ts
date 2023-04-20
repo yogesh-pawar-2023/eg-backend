@@ -28,14 +28,23 @@ export class UserController {
   async getQualifications() {
     const data = await lastValueFrom(
       this.httpService
-        .post(this.url, {
-          query: `query MyQuery {
-            qualification_masters {
-              id
-              name
-            }
-        }`,
-        })
+        .post(
+          this.url,
+          {
+            query: `query MyQuery {
+              qualification_masters {
+                id
+                name
+              }
+            }`,
+          },
+          {
+            headers: {
+              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
         .pipe(map((res) => res.data)),
     );
     return data;
@@ -115,9 +124,18 @@ export class UserController {
   async q(tableName: String, item: Object, fields: any, onlyFields: any = []) {
     return lastValueFrom(
       this.httpService
-        .post(this.url, {
-          query: this.query(tableName, item, fields, onlyFields),
-        })
+        .post(
+          this.url,
+          {
+            query: this.query(tableName, item, fields, onlyFields),
+          },
+          {
+            headers: {
+              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
         .pipe(map((res) => res.data)),
     );
   }
@@ -125,9 +143,18 @@ export class UserController {
   async qM(tableName: String, item: any, fields: any, onlyFields: any = []) {
     return lastValueFrom(
       this.httpService
-        .post(this.url, {
-          query: this.queryMulti(tableName, item, fields, onlyFields),
-        })
+        .post(
+          this.url,
+          {
+            query: this.queryMulti(tableName, item, fields, onlyFields),
+          },
+          {
+            headers: {
+              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
         .pipe(map((res) => res.data)),
     );
   }
@@ -459,7 +486,14 @@ export class UserController {
     };
 
     const response = await lastValueFrom(
-      this.httpService.post(this.url, data).pipe(map((res) => res.data)),
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
     );
     const result = response?.data?.users_by_pk;
     const mappedResponse = result;
