@@ -1,5 +1,15 @@
 import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Get, Param, Post, Put, Query, Req,Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  Request,
+} from '@nestjs/common';
 import { log } from 'console';
 import { lastValueFrom, map } from 'rxjs';
 import { HasuraService } from './helper/hasura.service';
@@ -355,8 +365,16 @@ export class UserController {
     };
 
     const response = await lastValueFrom(
-      this.httpService.post(this.url, data).pipe(map((res) => res.data)),
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
     );
+
     let result = response?.data?.users;
 
     let mappedResponse = result;
@@ -482,14 +500,15 @@ export class UserController {
     @Param('id') id: string,
     @Body() req: Record<string, any>,
   ) {
-    return this.userService.update(id, req,"program_faciltators");
-  }  
+    return this.userService.update(id, req, 'program_faciltators');
+  }
 
   @Post('/login')
-  login(@Query('username') username: string,
-    @Query('password') password: string
+  login(
+    @Query('username') username: string,
+    @Query('password') password: string,
   ) {
-    return this.userService.login(username,password);
+    return this.userService.login(username, password);
   }
   @Get('/ip_user_info')
   ipUserInfo(@Req() request: Request) {

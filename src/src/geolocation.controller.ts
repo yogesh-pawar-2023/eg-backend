@@ -32,7 +32,6 @@ export class GeolocationController {
     const response = await this.geolocationService.findAll(tableName, {
       district_name: name,
     });
-
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 

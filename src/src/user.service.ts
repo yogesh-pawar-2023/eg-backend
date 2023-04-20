@@ -60,7 +60,7 @@ export class UserService {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          error: 'Erorr while updating user !',
+          error: `Erorr while updating ${tableName} !`,
         },
         HttpStatus.FORBIDDEN,
         {
@@ -101,7 +101,56 @@ export class UserService {
     // Set query for getting data
     var queryData = {
       query: `query GetUserDetails($keycloak_id:uuid) {
-            users(where: {keycloak_id: {_eq: $keycloak_id}}) {
+          users(where: {keycloak_id: {_eq: $keycloak_id}}) {
+            id
+            first_name
+            last_name
+            gender
+            email_id
+            dob
+            district_id
+            created_by
+            lat
+            long
+            mobile
+            password
+            aadhar_token
+            address
+            block_id
+            block_village_id
+            keycloak_id
+            state_id
+            updated_by
+            core_faciltator {
+              created_by
+              device_ownership
+              device_type
+              id
+              pan_no
+              refreere
+              sourcing_channel
+              updated_by
+              user_id
+            }
+            experience {
+              user_id
+              start_year
+              end_year
+              experience_in_years
+              context
+              context_id
+              created_by
+              description
+              id
+              institution
+              organization
+              role_title
+              updated_by
+            }
+            program_faciltators {
+              avaibility
+              created_by
+              has_social_work_exp
               id
               first_name
               last_name
@@ -110,12 +159,6 @@ export class UserService {
               dob
               district_id
               created_by
-              device_ownership
-              device_type
-              id
-              pan_no
-              refreere
-              sourcing_channel
               lat
               long
               mobile
@@ -177,7 +220,8 @@ export class UserService {
                 user_id
               }
             }
-          }`,
+          }
+        }`,
       variables: { keycloak_id: keycloak_id },
     };
     // Initialize config
