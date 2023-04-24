@@ -3,15 +3,19 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
   Req,
   Request,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { log } from 'console';
 import { lastValueFrom, map } from 'rxjs';
+import { CreateUserDto } from './helper/dto/create-user.dto';
 import { HasuraService } from './helper/hasura.service';
 import { UserService } from './user.service';
 
@@ -164,7 +168,9 @@ export class UserController {
   };
 
   @Post('/create')
-  async create(@Body() req: Record<string, any>) {
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async create(@Body() req: CreateUserDto) {
     let i = 0,
       response = [];
     const tableName = 'insert_users_one';
@@ -216,7 +222,7 @@ export class UserController {
           'user_id',
         ],
       );
-      console.log(qualification);
+
       response[i++] = this.getResponce(qualification, qualificationTableName);
 
       const programFaciltatorsTableName = 'insert_core_faciltators_one';
@@ -234,11 +240,13 @@ export class UserController {
       const coreFaciltatorsTableName = 'insert_program_faciltators_one';
       const coreFaciltators = await this.q(
         coreFaciltatorsTableName,
-        { ...req, user_id },
-        ['id', 'avaibility', 'user_id'],
+        { ...req, status: 'lead', user_id },
+        ['id', 'avaibility', 'parent_ip', 'user_id'],
         [
+          'parent_ip',
           'avaibility',
           'program_id',
+          'status',
           'has_social_work_exp',
           'social_background_verified_by_neighbours',
           'village_knowledge_test',
@@ -318,7 +326,7 @@ export class UserController {
         }
       });
     }
-
+    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "1"}}`;
     var data = {
       query: `query SearchAttendance($limit:Int, $offset:Int) {
         users_aggregate(where:{${query}}) {
@@ -365,6 +373,7 @@ export class UserController {
           program_faciltators {
             id
             status
+            parent_ip
             avaibility
             has_social_work_exp
             id
