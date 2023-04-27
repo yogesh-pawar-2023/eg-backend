@@ -10,7 +10,7 @@ export class GeolocationController {
   public async states(@Body() request: Record<string, any>) {
     const { filters } = request;
     const tableName = 'address';
-    const response = await this.geolocationService.findAll(tableName, filters);
+    const response = await this.geolocationService.states();
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 
@@ -29,9 +29,7 @@ export class GeolocationController {
     @Body() request: Record<string, any>,
   ) {
     const tableName = 'address';
-    const response = await this.geolocationService.findAll(tableName, {
-      district_name: name,
-    });
+    const response = await this.geolocationService.districts(name);
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 
@@ -49,9 +47,7 @@ export class GeolocationController {
     @Body() request: Record<string, any>,
   ) {
     const tableName = 'address';
-    const response = await this.geolocationService.findAll(tableName, {
-      block_name: name,
-    });
+    const response = await this.geolocationService.blocks(name);
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 
@@ -70,9 +66,7 @@ export class GeolocationController {
     @Body() request: Record<string, any>,
   ) {
     const tableName = 'address';
-    const response = await this.geolocationService.findAll(tableName, {
-      village_ward_name: name,
-    });
+    const response = await this.geolocationService.villages(name);
     let mappedResponse = response?.data[tableName];
     const count = response?.data[`${tableName}_aggregate`]?.aggregate?.count;
 
