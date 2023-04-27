@@ -8,12 +8,14 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { UserHelper } from './helper/userHelper';
+import { HasuraService } from './helper/hasura.service';
 @Injectable()
 export class UserService {
   public url = process.env.HASURA_BASE_URL;
   constructor(
     private readonly httpService: HttpService,
     private helper: UserHelper,
+    private hasuraService: HasuraService,
   ) {}
   public async update(userId: string, request: any, tableName: String) {
     try {
@@ -157,7 +159,7 @@ export class UserService {
               updated_by
             }
             program_faciltators {
-              avaibility
+              availability
               created_by
               has_social_work_exp
               id
@@ -168,6 +170,7 @@ export class UserService {
               user_id
               village_knowledge_test
               status
+              form_step_number
             }
             qualifications {
               created_by
@@ -186,17 +189,6 @@ export class UserService {
                 name
                 updated_by
               }
-            }
-            core_faciltator {
-              created_by
-              device_ownership
-              device_type
-              id
-              pan_no
-              refreere
-              sourcing_channel
-              updated_by
-              user_id
             }
           }
         }`,
@@ -221,14 +213,19 @@ export class UserService {
   }
 
   public async register(body: any, request: any) {
-    var axios = require('axios');
+    const axios = require('axios');
     const password = `@${this.helper.generateRandomPassword()}`;
-    let username = body.mobile + '@eg.local';
-    var data_to_create_user = {
+    let username = `${body.first_name}`;
+    if (body?.last_name) {
+      username += `_${body.last_name.charAt(0)}`;
+    }
+    username += `${body.mobile}@eg.local`;
+    const data_to_create_user = {
       enabled: 'true',
-      firstName: body.first_name,
-      lastName: body.last_name,
+      firstName: body?.first_name,
+      lastName: body?.last_name,
       username: username,
+      email: body?.email,
       credentials: [
         {
           type: 'password',
@@ -263,7 +260,7 @@ export class UserService {
             status,
             message: 'User created successfully',
             data: {
-              result,
+              user: result?.data,
               keycloak_id: keycloak_id,
               username: username,
               password: password,
@@ -281,269 +278,283 @@ export class UserService {
       throw new BadRequestException('Error while creating user !');
     }
   }
-  queryMulti(tableName: String, items: any, fields: any, onlyFields: any = []) {
-    let returnkeys = [];
-    const getObjStr = (item: Object, type: String = '') => {
-      let str = '[';
-      items.forEach((item, pindex) => {
-        const keys = Object.keys(item);
-        str += '{';
-        keys.forEach((e, index) => {
-          if (!returnkeys.includes(e)) {
-            returnkeys = [...returnkeys, e];
-          }
-          if (onlyFields.length < 1 || onlyFields.includes(e)) {
-            if (type === 'obj') {
-              str += `${e}:"${item[e]}"${keys.length > index + 1 ? ',' : ''}`;
-            } else {
-              str += `$${e}:String${keys.length > index + 1 ? ',' : ''}`;
-            }
-          }
-        });
-        str += `}${items.length > pindex + 1 ? ',' : ''}`;
-      });
-      return (str += ']');
-    };
-
-    const getParam = (keys: any) => {
-      let str = '';
-      keys.forEach((e: any, index: any) => {
-        str += `${e}${keys.length > index + 1 ? '\n' : ''}`;
-      });
-      return str;
-    };
-
-    return `mutation MyQuery {
-      ${tableName}(objects: ${getObjStr(items, 'obj')}) {
-        returning {${getParam(fields ? fields : returnkeys)}}
-      }
-    }
-    `;
-  }
-
-  query(tableName: String, item: Object, fields: any, onlyFields: any = []) {
-    const keys = Object.keys(item);
-    const getObjStr = (item: Object, type: String = '') => {
-      let str = '';
-      keys.forEach((e, index) => {
-        if (onlyFields.length < 1 || onlyFields.includes(e)) {
-          if (type === 'obj') {
-            str += `${e}:"${item[e]}"${keys.length > index + 1 ? ',' : ''}`;
-          } else {
-            str += `$${e}:String${keys.length > index + 1 ? ',' : ''}`;
-          }
-        }
-      });
-      return str;
-    };
-
-    const getParam = (keys: any) => {
-      let str = '';
-      keys.forEach((e: any, index: any) => {
-        str += `${e}${keys.length > index + 1 ? '\n' : ''}`;
-      });
-      return str;
-    };
-
-    return `mutation MyQuery {
-      ${tableName}(object: {${getObjStr(item, 'obj')}}) {
-        ${getParam(fields ? fields : keys)}
-      }
-    }
-    `;
-  }
-
-  async q(tableName: String, item: Object, fields: any, onlyFields: any = []) {
-    return lastValueFrom(
-      this.httpService
-        .post(
-          this.url,
-          {
-            query: this.query(tableName, item, fields, onlyFields),
-          },
-          {
-            headers: {
-              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        .pipe(map((res) => res.data)),
-    );
-  }
-
-  async qM(tableName: String, item: any, fields: any, onlyFields: any = []) {
-    return lastValueFrom(
-      this.httpService
-        .post(
-          this.url,
-          {
-            query: this.queryMulti(tableName, item, fields, onlyFields),
-          },
-          {
-            headers: {
-              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        .pipe(map((res) => res.data)),
-    );
-  }
-
-  public getResponce = ({ data, errors }: any, tableName: any) => {
-    return { [tableName]: data ? data[tableName] : errors ? errors[0] : {} };
-  };
 
   async newCreate(req: any) {
-    let i = 0,
-      response = [];
-    const tableName = 'insert_users_one';
-    const data = await this.q(
-      tableName,
-      req,
-      ['id', 'first_name', 'last_name', 'mobile', 'keycloak_id'],
-      ['first_name', 'last_name', 'mobile', 'keycloak_id'],
-    );
-    const newR = this.getResponce(data, tableName);
+    const tableName = 'users';
+    const newR = await this.hasuraService.q(tableName, req, [
+      'first_name',
+      'last_name',
+      'mobile',
+      'email_id',
+      'keycloak_id',
+    ]);
     const user_id = newR[tableName]?.id;
-    response[i++] = newR;
     if (user_id) {
-      const programFaciltatorsTableName = 'insert_program_faciltators_one';
-      const programFaciltators = await this.q(
-        programFaciltatorsTableName,
-        { ...req, user_id },
-        ['id', 'avaibility', 'user_id'],
-        ['parent_ip', 'user_id'],
-      );
-      response[i++] = this.getResponce(
-        programFaciltators,
-        programFaciltatorsTableName,
-      );
+      await this.hasuraService.q(`program_faciltators`, { ...req, user_id }, [
+        'parent_ip',
+        'user_id',
+      ]);
     }
-    return response;
+    return await this.userById(user_id);
   }
 
-  async create(req: any) {
+  async create(req: any, update = false) {
     let i = 0,
       response = [];
-    const tableName = 'insert_users_one';
-    const data = await this.q(
-      tableName,
-      req,
-      [
-        'id',
-        'first_name',
-        'last_name',
-        'mobile',
-        'email_id',
-        'gender',
-        'dob',
-        'address',
-        'aadhar_token',
-        'keycloak_id',
-      ],
-      [
-        'first_name',
-        'last_name',
-        'mobile',
-        'email_id',
-        'gender',
-        'dob',
-        'address',
-        'aadhar_token',
-        'keycloak_id',
-      ],
-    );
-    const newR = this.getResponce(data, tableName);
-    const user_id = newR[tableName]?.id;
-    response[i++] = newR;
+    let objKey = Object.keys(req);
+    const userArr = [
+      'first_name',
+      'last_name',
+      'email_id',
+      'gender',
+      'dob',
+      'address',
+      'aadhar_token',
+      'keycloak_id',
+      'profile_url',
+    ];
+    let user_id = req?.id ? req?.id : null;
+    const keyExist = userArr.filter((e) => objKey.includes(e));
+    if (keyExist.length > 0) {
+      const tableName = 'users';
+      const newR = await this.hasuraService.q(tableName, req, userArr, update);
+      user_id = newR[tableName]?.id ? newR[tableName]?.id : user_id;
+      response[i++] = newR;
+    }
     if (user_id) {
-      const qualificationTableName = 'insert_qualifications_one';
-      const qualification = await this.q(
-        qualificationTableName,
-        {
-          ...req,
-          qualification_master_id: req.qualification_master_id
-            ? req.qualification_master_id
-            : 1,
+      const fillKeys = ['qualification', 'degree'];
+      const qkeyExist = fillKeys.filter((e) => objKey.includes(e));
+      if (qkeyExist.length > 0) {
+        await this.hasuraService.delete('qualifications', {
           user_id,
-        },
-        ['id', 'qualification_master_id', 'user_id'],
-        [
-          'qualification_master_id',
-          'start_year',
-          'end_year',
-          'institution',
-          'user_id',
-        ],
-      );
-      response[i++] = this.getResponce(qualification, qualificationTableName);
-
-      const programFaciltatorsTableName = 'insert_core_faciltators_one';
-      const programFaciltators = await this.q(
-        programFaciltatorsTableName,
-        { ...req, user_id },
-        ['id', 'device_type', 'device_ownership', 'user_id'],
-        ['pan_no', 'device_type', 'device_ownership', 'user_id'],
-      );
-      response[i++] = this.getResponce(
-        programFaciltators,
-        programFaciltatorsTableName,
-      );
-
-      const coreFaciltatorsTableName = 'insert_program_faciltators_one';
-      const coreFaciltators = await this.q(
-        coreFaciltatorsTableName,
-        { ...req, user_id },
-        ['id', 'avaibility', 'user_id'],
-        [
-          'avaibility',
-          'program_id',
-          'parent_ip',
-          'has_social_work_exp',
-          'social_background_verified_by_neighbours',
-          'village_knowledge_test',
-          'police_verification_done',
-          'user_id',
-        ],
-      );
-      response[i++] = this.getResponce(
-        coreFaciltators,
-        coreFaciltatorsTableName,
-      );
+        });
+        response[i++] = await Promise.all(
+          fillKeys
+            .map(async (e) =>
+              req[e]
+                ? await this.hasuraService.q(
+                    'qualifications',
+                    {
+                      qualification_master_id: req[e],
+                      user_id,
+                    },
+                    ['qualification_master_id', 'user_id'],
+                  )
+                : null,
+            )
+            .filter((e) => e),
+        );
+      }
+      const cFArr = [
+        'pan_no',
+        'device_type',
+        'device_ownership',
+        'sourcing_channel',
+        'refreere',
+        'user_id',
+      ];
+      const cFkeyExist = cFArr.filter((e) => objKey.includes(e));
+      if (cFkeyExist.length > 0) {
+        response[i++] = await this.hasuraService.q(
+          'core_faciltators',
+          {
+            ...req,
+            id: req?.core_faciltators?.id ? req?.core_faciltators?.id : null,
+            user_id,
+          },
+          cFArr,
+          update,
+        );
+      }
+      const pFArr = [
+        'availability',
+        'program_id',
+        'parent_ip',
+        'has_social_work_exp',
+        'social_background_verified_by_neighbours',
+        'village_knowledge_test',
+        'police_verification_done',
+        'user_id',
+        'form_step_number',
+        'status',
+      ];
+      const pFkeyExist = pFArr.filter((e) => objKey.includes(e));
+      if (pFkeyExist.length > 0) {
+        response[i++] = await this.hasuraService.q(
+          'program_faciltators',
+          {
+            ...req,
+            id: req?.program_faciltators?.id
+              ? req?.program_faciltators?.id
+              : null,
+            status: 'lead',
+            user_id: user_id,
+          },
+          pFArr,
+          update,
+        );
+      }
 
       if (req['experience']) {
-        const experienceTableName = 'insert_experience';
-        const experience = await this.qM(
-          experienceTableName,
-          req['experience'].map((e: Object) => {
-            return { ...e, user_id };
-          }),
-          [
-            'description',
-            'user_id',
-            'role_title',
-            'organization',
-            'institution',
-            'experience_in_years',
-          ],
-          [
-            'description',
-            'user_id',
-            'role_title',
-            'organization',
-            'institution',
-            'start_year',
-            'end_year',
-            'experience_in_years',
-          ],
+        await this.hasuraService.delete('experience', {
+          user_id,
+          type: 'experience',
+        });
+        await Promise.all(
+          req['experience'].map(
+            async (e: Object) =>
+              this.hasuraService.q(
+                'experience',
+                { ...e, type: 'experience', user_id },
+                [
+                  'type',
+                  'description',
+                  'user_id',
+                  'role_title',
+                  'organization',
+                  'institution',
+                  'start_year',
+                  'end_year',
+                  'experience_in_years',
+                ],
+              ),
+            update,
+          ),
         );
-        response[i++] = this.getResponce(experience, experienceTableName);
+      }
+      if (req['vo_experience']) {
+        await this.hasuraService.delete('experience', {
+          user_id,
+          type: 'vo_experience',
+        });
+        await Promise.all(
+          req['vo_experience'].map(
+            async (e: Object) =>
+              this.hasuraService.q(
+                'experience',
+                { ...e, type: 'vo_experience', user_id },
+                [
+                  'type',
+                  'description',
+                  'user_id',
+                  'role_title',
+                  'organization',
+                  'institution',
+                  'start_year',
+                  'end_year',
+                  'experience_in_years',
+                ],
+              ),
+            update,
+          ),
+        );
       }
     }
+    return this.userById(user_id);
+  }
 
-    return response;
+  async userById(id: any) {
+    var data = {
+      query: `query searchById {        
+        users_by_pk(id: ${id}) {
+          first_name
+          id
+          last_name
+          dob
+          aadhar_token
+          address
+          block_id
+          block_village_id
+          created_by
+          district_id
+          email_id
+          gender
+          lat
+          long
+          mobile
+          password
+          state_id
+          updated_by
+          core_faciltator {
+            created_by
+            device_ownership
+            device_type
+            id
+            pan_no
+            refreere
+            sourcing_channel
+            updated_by
+            user_id
+          }
+          experience {
+            description
+            end_year
+            experience_in_years
+            institution
+            start_year
+            organization
+            role_title
+            user_id
+          }
+          program_faciltators {
+            parent_ip
+            availability
+            has_social_work_exp
+            id
+            police_verification_done
+            program_id
+            social_background_verified_by_neighbours
+            user_id
+            village_knowledge_test
+            status
+            form_step_number
+            created_by
+            updated_by
+          }
+          qualifications {
+            created_by
+            end_year
+            id
+            institution
+            qualification_master_id
+            start_year
+            updated_by
+            user_id
+            qualification_master {
+              context
+              context_id
+              created_by
+              id
+              name
+              updated_by
+            }
+          }
+        }}`,
+    };
+
+    const response = await lastValueFrom(
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
+    );
+    let result = response?.data?.users_by_pk;
+    if (result?.program_faciltators && result?.program_faciltators[0]) {
+      result.program_faciltators = result.program_faciltators[0];
+    } else {
+      result = { ...result, program_faciltators: {} };
+    }
+    const mappedResponse = result;
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      data: mappedResponse,
+    };
   }
 
   async QueryFilter(tableName: any, filter: any, sort: any) {
@@ -558,5 +569,163 @@ export class UserService {
     return `query MyQuery{
       ${tableName}(where ${fq}, _order_by:${sortkey})
     }`;
+  }
+
+  async list(request: any) {
+    const { filters } = request;
+    const page = request.page ? request.page : '1';
+    const limit = request?.limit ? request?.limit : '10';
+
+    let offset = 0;
+    if (page > 1 && limit) {
+      offset = parseInt(limit) * (page - 1);
+    }
+
+    let query = '';
+    if (filters) {
+      Object.keys(filters).forEach((e) => {
+        if (filters[e] && filters[e] != '') {
+          query += `${e}:{_eq:"${filters[e]}"}`;
+        }
+      });
+    }
+    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "1"}}`;
+    var data = {
+      query: `query SearchAttendance($limit:Int, $offset:Int) {
+        users_aggregate(where:{${query}}) {
+          aggregate {
+            count
+          }
+        }
+        users(where:{${query}}, limit: $limit, offset: $offset) {
+          first_name
+          id
+          last_name
+          dob
+          aadhar_token
+          address
+          block_id
+          block_village_id
+          created_by
+          district_id
+          email_id
+          gender
+          lat
+          long
+          mobile
+          password
+          state_id
+          updated_by
+          core_faciltator {
+            created_by
+            device_ownership
+            device_type
+            id
+            pan_no
+            refreere
+            sourcing_channel
+            updated_by
+            user_id
+          }
+          experience {
+            description
+            end_year
+            experience_in_years
+            institution
+            start_year
+            organization
+            role_title
+            user_id
+          }
+          program_faciltators {
+            parent_ip
+            availability
+            has_social_work_exp
+            id
+            police_verification_done
+            program_id
+            social_background_verified_by_neighbours
+            user_id
+            village_knowledge_test
+            status
+            form_step_number
+            created_by
+            updated_by
+          }
+          qualifications {
+            created_by
+            end_year
+            id
+            institution
+            qualification_master_id
+            start_year
+            updated_by
+            user_id
+            qualification_master {
+              context
+              context_id
+              created_by
+              id
+              name
+              updated_by
+            }
+          }
+        }}`,
+      variables: {
+        limit: parseInt(limit),
+        offset: offset,
+      },
+    };
+
+    const response = await lastValueFrom(
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
+    );
+
+    let result = response?.data?.users;
+
+    let mappedResponse = result;
+    const count = response?.data?.users_aggregate?.aggregate?.count;
+    const totalPages = Math.ceil(count / limit);
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      totalCount: count,
+      data: mappedResponse,
+      limit,
+      currentPage: page,
+      totalPages: `${totalPages}`,
+    };
+  }
+
+  async isUserExist(req: any) {
+    // Set User table name
+    const tableName = 'users';
+
+    // Calling hasura common method find all
+    const data_exist = await this.hasuraService.findAll(tableName, req);
+    let response = data_exist.data.users;
+
+    // Check wheather user is exist or not based on response
+    if (response.length > 0) {
+      return {
+        status: 422,
+        message: 'User exist',
+        isUserExist: true,
+      };
+    } else {
+      return {
+        status: 200,
+        message: 'User not exist',
+        isUserExist: false,
+      };
+    }
   }
 }

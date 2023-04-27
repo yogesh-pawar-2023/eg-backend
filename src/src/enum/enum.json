@@ -1,39 +1,37 @@
-
 {
-    "GENDER":[
-        {"title":"FEMALE","value":"female"},
-        {"title":"MALE","value":"male"},
-        {"title":"OTHER","value":"other"}
-    ],
-    "QUALIFICATION":[
-        {"title":"Bachelors","value":"bachelors"},
-        {"title":"Masters","value":"masters"},
-        {"title":"Diploma","value":"diploma"},
-        {"title":"Post Graduate","value":"post_graduate"},
-        {"title":"Ph.D.","value":"ph_d"}
-    ],
-    "TEACHING_DEGREE":[
-        {"title":"No","value":"no"},
-        {"title":"Yes","value":"yes"}
-
-    ],
-   "EXPERIENCE":[
-    {"title":"1","value":"1"},
-    {"title":"2","value":"2"},
-    {"title":"3","value":"3"},
-    {"title":"4","value":"4"},
-    {"title":"5+","value":"5+"}
-   ],
-   "MOBILE_TYPE":[
-    {"title":"Android","value":"android"},
-    {"title":"Iphone","value":"iphone"}
-   ],
-   "REFERRAL":[
-    {"title":"Prerak Referral","value":"prerak_referral"},
-    {"title":"NGO Referral","value":"ngo_referral"},
-    {"title":"Advertisements","value":"advertisements"},
-    {"title":"Dropouts","value":"dropouts"},
-    {"title":"Old Prerak","value":"old_prerak"},
-    {"title":"Other","value":"ohther"}
-   ]
+  "GENDER": [
+    { "title": "FEMALE", "value": "female" },
+    { "title": "MALE", "value": "male" },
+    { "title": "OTHER", "value": "other" }
+  ],
+  "QUALIFICATION": [
+    { "title": "Bachelors", "value": "bachelors" },
+    { "title": "Masters", "value": "masters" },
+    { "title": "Diploma", "value": "diploma" },
+    { "title": "Post Graduate", "value": "post_graduate" },
+    { "title": "Ph.D.", "value": "ph_d" }
+  ],
+  "TEACHING_DEGREE": [
+    { "title": "No", "value": "no" },
+    { "title": "Yes", "value": "yes" }
+  ],
+  "EXPERIENCE": [
+    { "title": "1", "value": "1" },
+    { "title": "2", "value": "2" },
+    { "title": "3", "value": "3" },
+    { "title": "4", "value": "4" },
+    { "title": "5+", "value": "5+" }
+  ],
+  "MOBILE_TYPE": [
+    { "title": "Android", "value": "android" },
+    { "title": "Iphone", "value": "iphone" }
+  ],
+  "REFERRAL": [
+    { "title": "Prerak Referral", "value": "prerak_referral" },
+    { "title": "NGO Referral", "value": "ngo_referral" },
+    { "title": "Advertisements", "value": "advertisements" },
+    { "title": "Dropouts", "value": "dropouts" },
+    { "title": "Old Prerak", "value": "old_prerak" },
+    { "title": "Other", "value": "other" }
+  ]
 }
