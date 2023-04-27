@@ -89,7 +89,7 @@ export class UserService {
     };
     var configData = {
       method: 'post',
-      url: process.env.KEYCLOAK_URL,
+      url: `${process.env.KEYCLOAK_URL}/realms/eg-sso/protocol/openid-connect/token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -223,11 +223,7 @@ export class UserService {
   public async register(body: any, request: any) {
     var axios = require('axios');
     const password = `@${this.helper.generateRandomPassword()}`;
-    let username = '';
-    if (!body.mobile) {
-      throw new BadRequestException('Mobile Number is required !');
-    }
-    username = body.mobile + '@eg.local';
+    let username = body.mobile + '@eg.local';
     var data_to_create_user = {
       enabled: 'true',
       firstName: body.first_name,
@@ -240,34 +236,47 @@ export class UserService {
           temporary: false,
         },
       ],
+      groups: ['facilitators'],
     };
-    var config = {
-      method: 'post',
-      url: process.env.KEYCLOAK_USER_CREATE_URL,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: request.headers.authorization,
-      },
-      data: data_to_create_user,
-    };
+    const adminResult = await this.helper.getAdminKeycloakToken();
 
-    const response_of_user_create = await axios(config);
-    if (response_of_user_create.headers.location) {
-      const split = response_of_user_create.headers.location.split('/');
-      const keycloak_id = split[split.length - 1];
-      body.keycloak_id = keycloak_id;
-      this.create(body);
-      return {
-        status: response_of_user_create.status,
-        message: 'User created successfully',
-        data: [
-          {
-            keycloak_id: keycloak_id,
-            username: username,
-            password: password,
-          },
-        ],
+    if (adminResult?.data?.access_token) {
+      var config = {
+        method: 'post',
+        url: `${process.env.KEYCLOAK_URL}/admin/realms/eg-sso/users`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminResult?.data?.access_token}`,
+        },
+        data: data_to_create_user,
       };
+
+      try {
+        const { headers, status } = await axios(config);
+        if (headers.location) {
+          const split = headers.location.split('/');
+          const keycloak_id = split[split.length - 1];
+          body.keycloak_id = keycloak_id;
+          const result = await this.newCreate(body);
+
+          return {
+            status,
+            message: 'User created successfully',
+            data: {
+              result,
+              keycloak_id: keycloak_id,
+              username: username,
+              password: password,
+            },
+          };
+        } else {
+          throw new BadRequestException('Error while generating admin token !');
+        }
+      } catch (e) {
+        throw new HttpException(e.message, HttpStatus.CONFLICT, {
+          cause: e,
+        });
+      }
     } else {
       throw new BadRequestException('Error while creating user !');
     }
@@ -386,6 +395,35 @@ export class UserService {
     return { [tableName]: data ? data[tableName] : errors ? errors[0] : {} };
   };
 
+  async newCreate(req: any) {
+    let i = 0,
+      response = [];
+    const tableName = 'insert_users_one';
+    const data = await this.q(
+      tableName,
+      req,
+      ['id', 'first_name', 'last_name', 'mobile', 'keycloak_id'],
+      ['first_name', 'last_name', 'mobile', 'keycloak_id'],
+    );
+    const newR = this.getResponce(data, tableName);
+    const user_id = newR[tableName]?.id;
+    response[i++] = newR;
+    if (user_id) {
+      const programFaciltatorsTableName = 'insert_program_faciltators_one';
+      const programFaciltators = await this.q(
+        programFaciltatorsTableName,
+        { ...req, user_id },
+        ['id', 'avaibility', 'user_id'],
+        ['parent_ip', 'user_id'],
+      );
+      response[i++] = this.getResponce(
+        programFaciltators,
+        programFaciltatorsTableName,
+      );
+    }
+    return response;
+  }
+
   async create(req: any) {
     let i = 0,
       response = [];
@@ -440,7 +478,6 @@ export class UserService {
           'user_id',
         ],
       );
-      console.log(qualification);
       response[i++] = this.getResponce(qualification, qualificationTableName);
 
       const programFaciltatorsTableName = 'insert_core_faciltators_one';
@@ -463,6 +500,7 @@ export class UserService {
         [
           'avaibility',
           'program_id',
+          'parent_ip',
           'has_social_work_exp',
           'social_background_verified_by_neighbours',
           'village_knowledge_test',
@@ -508,7 +546,7 @@ export class UserService {
     return response;
   }
 
-  async QueryFilter(tableName, filter, sort) {
+  async QueryFilter(tableName: any, filter: any, sort: any) {
     let keys = Object.keys(filter);
     let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
     let fq = '';

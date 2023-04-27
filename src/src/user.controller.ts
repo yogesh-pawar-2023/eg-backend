@@ -16,6 +16,7 @@ import {
 import { log } from 'console';
 import { lastValueFrom, map } from 'rxjs';
 import { CreateUserDto } from './helper/dto/create-user.dto';
+import { RegisterFacilitatorDto } from './helper/dto/register-facilitator.dto';
 import { HasuraService } from './helper/hasura.service';
 import { UserService } from './user.service';
 
@@ -57,7 +58,7 @@ export class UserController {
   @Post('/create')
   @HttpCode(200)
   @UsePipes(ValidationPipe)
-  public async create(@Body() req: Record<string, any>) {
+  public async create(@Body() req: CreateUserDto) {
     return this.userService.create(req);
   }
 
@@ -314,8 +315,10 @@ export class UserController {
   }
 
   @Post('/user_create')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
   public async register(
-    @Body() body: Record<string, any>,
+    @Body() body: RegisterFacilitatorDto,
     @Req() request: Request,
   ) {
     return this.userService.register(body, request);
