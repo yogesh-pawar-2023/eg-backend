@@ -157,6 +157,7 @@ export class UserService {
               organization
               role_title
               updated_by
+              type
             }
             program_faciltators {
               availability
@@ -219,13 +220,13 @@ export class UserService {
     if (body?.last_name) {
       username += `_${body.last_name.charAt(0)}`;
     }
-    username += `${body.mobile}@eg.local`;
+    username += `_${body.mobile}`;
     const data_to_create_user = {
       enabled: 'true',
       firstName: body?.first_name,
       lastName: body?.last_name,
       username: username,
-      email: body?.email,
+      email: body?.email_id,
       credentials: [
         {
           type: 'password',
@@ -495,6 +496,7 @@ export class UserService {
             organization
             role_title
             user_id
+            type
           }
           program_faciltators {
             parent_ip
@@ -636,6 +638,7 @@ export class UserService {
             organization
             role_title
             user_id
+            type
           }
           program_faciltators {
             parent_ip
