@@ -110,7 +110,7 @@ export class UserService {
     let keycloak_id = decoded.sub;
 
     var axios = require('axios');
-    // Set query for getting data
+    // Set query for getting data info
     var queryData = {
       query: `query GetUserDetails($keycloak_id:uuid) {
           users(where: {keycloak_id: {_eq: $keycloak_id}}) {
@@ -134,6 +134,15 @@ export class UserService {
             state_id
             updated_by
             profile_url
+            program_users {
+              id
+              organisation_id
+              academic_year_id
+              program_id
+              role_id
+              status
+              user_id
+            }
             core_faciltator {
               created_by
               device_ownership
@@ -456,6 +465,41 @@ export class UserService {
     return this.userById(user_id);
   }
 
+  async organizationInfo(id: any) {
+    const data = {
+      query: `query MyQuery {
+        organisations_by_pk(id:"${id}") {
+          address
+          contact_person
+          gst_no
+          mobile
+          id
+          name
+        }
+      }
+      `,
+    };
+
+    const response = await lastValueFrom(
+      this.httpService
+        .post(this.url, data, {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data)),
+    );
+    let result = response?.data?.organisations_by_pk;
+    const mappedResponse = result;
+
+    return {
+      statusCode: 200,
+      message: 'Ok.',
+      data: mappedResponse,
+    };
+  }
+
   async userById(id: any) {
     var data = {
       query: `query searchById {        
@@ -479,6 +523,15 @@ export class UserService {
           state_id
           updated_by
           profile_url
+          program_users {
+            id
+            organisation_id
+            academic_year_id
+            program_id
+            role_id
+            status
+            user_id
+          }
           core_faciltator {
             created_by
             device_ownership
@@ -595,7 +648,7 @@ export class UserService {
       });
     }
     const user = await this.ipUserInfo(req);
-    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "${user?.data?.id}"}}`;
+    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "${user?.data?.program_users[0]?.organisation_id}"}}`;
     var data = {
       query: `query SearchAttendance($limit:Int, $offset:Int) {
         users_aggregate(where:{${query}}) {
@@ -623,6 +676,15 @@ export class UserService {
           state_id
           updated_by
           profile_url
+          program_users {
+            id
+            organisation_id
+            academic_year_id
+            program_id
+            role_id
+            status
+            user_id
+          }
           core_faciltator {
             created_by
             device_ownership
