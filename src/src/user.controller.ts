@@ -83,8 +83,11 @@ export class UserController {
 
   // users/list API filter pagination
   @Post('/list')
-  public async searchAttendance(@Body() request: Record<string, any>) {
-    return this.userService.list(request);
+  public async searchAttendance(
+    @Body() request: Record<string, any>,
+    @Req() req: any,
+  ) {
+    return this.userService.list(request, req);
   }
 
   // users/list by ID API filter pagination

@@ -48,6 +48,7 @@ export class UserService {
         url: this.url,
         headers: {
           'Content-Type': 'application/json',
+          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
         },
         data: data,
       };
@@ -104,7 +105,7 @@ export class UserService {
 
   public async ipUserInfo(request: any) {
     // Get userid from  auth/login jwt token
-    const authToken = request.headers.authorization;
+    const authToken = request?.headers?.authorization;
     const decoded: any = jwt_decode(authToken);
     let keycloak_id = decoded.sub;
 
@@ -132,6 +133,7 @@ export class UserService {
             keycloak_id
             state_id
             updated_by
+            profile_url
             core_faciltator {
               created_by
               device_ownership
@@ -323,29 +325,6 @@ export class UserService {
       response[i++] = newR;
     }
     if (user_id) {
-      const fillKeys = ['qualification', 'degree'];
-      const qkeyExist = fillKeys.filter((e) => objKey.includes(e));
-      if (qkeyExist.length > 0) {
-        await this.hasuraService.delete('qualifications', {
-          user_id,
-        });
-        response[i++] = await Promise.all(
-          fillKeys
-            .map(async (e) =>
-              req[e]
-                ? await this.hasuraService.q(
-                    'qualifications',
-                    {
-                      qualification_master_id: req[e],
-                      user_id,
-                    },
-                    ['qualification_master_id', 'user_id'],
-                  )
-                : null,
-            )
-            .filter((e) => e),
-        );
-      }
       const cFArr = [
         'pan_no',
         'device_type',
@@ -393,6 +372,29 @@ export class UserService {
           },
           pFArr,
           update,
+        );
+      }
+      const fillKeys = ['qualification', 'degree'];
+      const qkeyExist = fillKeys.filter((e) => objKey.includes(e));
+      if (qkeyExist.length > 0) {
+        await this.hasuraService.delete('qualifications', {
+          user_id,
+        });
+        response[i++] = await Promise.all(
+          fillKeys
+            .map(async (e) =>
+              req[e]
+                ? await this.hasuraService.q(
+                    'qualifications',
+                    {
+                      qualification_master_id: req[e],
+                      user_id,
+                    },
+                    ['qualification_master_id', 'user_id'],
+                  )
+                : null,
+            )
+            .filter((e) => e),
         );
       }
 
@@ -476,6 +478,7 @@ export class UserService {
           password
           state_id
           updated_by
+          profile_url
           core_faciltator {
             created_by
             device_ownership
@@ -573,7 +576,7 @@ export class UserService {
     }`;
   }
 
-  async list(request: any) {
+  async list(request: any, req: any) {
     const { filters } = request;
     const page = request.page ? request.page : '1';
     const limit = request?.limit ? request?.limit : '10';
@@ -591,7 +594,8 @@ export class UserService {
         }
       });
     }
-    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "1"}}`;
+    const user = await this.ipUserInfo(req);
+    query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "${user?.data?.id}"}}`;
     var data = {
       query: `query SearchAttendance($limit:Int, $offset:Int) {
         users_aggregate(where:{${query}}) {
@@ -618,6 +622,7 @@ export class UserService {
           password
           state_id
           updated_by
+          profile_url
           core_faciltator {
             created_by
             device_ownership
@@ -701,7 +706,10 @@ export class UserService {
       statusCode: 200,
       message: 'Ok.',
       totalCount: count,
-      data: mappedResponse,
+      data: mappedResponse?.map((e) => ({
+        ...e,
+        ['program_faciltators']: e?.['program_faciltators']?.[0],
+      })),
       limit,
       currentPage: page,
       totalPages: `${totalPages}`,
