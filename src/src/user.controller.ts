@@ -126,6 +126,11 @@ export class UserController {
     return this.userService.ipUserInfo(request);
   }
 
+  @Get('/organization/:id')
+  organizationInfo(@Param('id') id: string) {
+    return this.userService.organizationInfo(id);
+  }
+
   // users/register on keycloak and hasura both side.
   @Post('/register')
   @HttpCode(200)
