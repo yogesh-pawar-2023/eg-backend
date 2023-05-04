@@ -9,6 +9,7 @@ import { lastValueFrom, map } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { UserHelper } from './helper/userHelper';
 import { HasuraService } from './helper/hasura.service';
+import { Response } from 'express';
 @Injectable()
 export class UserService {
   public url = process.env.HASURA_BASE_URL;
@@ -82,7 +83,7 @@ export class UserService {
     }
   }
 
-  public async login(username: string, password: string) {
+  public async login(username: string, password: string, response: Response) {
     var axios = require('axios');
     var loginData = {
       username: username,
@@ -99,8 +100,24 @@ export class UserService {
       data: loginData,
     };
 
-    const response = await axios(configData);
-    return response.data;
+    const res = await axios(configData);
+    if(res) {
+      //return res.data;
+      return response.status(200).send({
+        success: true,
+        status: 'Authenticated',
+        message: 'LOGGEDIN_SUCCESSFULLY',
+        result: res.data,
+      });
+    } else {
+      return response.status(401).send({
+        success: false,
+        status: 'Unauthorized',
+        message: 'INVALID_USERNAME_PASSWORD_MESSAGE',
+        result: null,
+      });
+    }
+    
   }
 
   public async ipUserInfo(request: any) {

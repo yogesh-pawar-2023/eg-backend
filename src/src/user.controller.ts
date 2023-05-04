@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   Request,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import { CreateUserDto } from './helper/dto/create-user.dto';
 import { RegisterFacilitatorDto } from './helper/dto/register-facilitator.dto';
 import { HasuraService } from './helper/hasura.service';
 import { UserService } from './user.service';
+import { Response } from 'express';
 
 @Controller('/users')
 export class UserController {
@@ -116,8 +118,9 @@ export class UserController {
   login(
     @Query('username') username: string,
     @Query('password') password: string,
+    @Res() response: Response
   ) {
-    return this.userService.login(username, password);
+    return this.userService.login(username, password, response);
   }
 
   // users/ip_user_info by auth token.
