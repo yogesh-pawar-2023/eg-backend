@@ -236,7 +236,7 @@ export class UserService {
       enabled: 'true',
       firstName: body?.first_name,
       lastName: body?.last_name,
-      username: username,
+      username: username.toLowerCase(),
       email: body?.email_id,
       credentials: [
         {
