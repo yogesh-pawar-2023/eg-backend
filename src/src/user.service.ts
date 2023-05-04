@@ -107,7 +107,7 @@ export class UserService {
           success: true,
           status: 'Authenticated',
           message: 'LOGGEDIN_SUCCESSFULLY',
-          result: res.data,
+          data: res.data,
         });
       } else {
         console.log("inside else")
@@ -120,7 +120,7 @@ export class UserService {
         success: false,
         status: 'Unauthorized',
         message: 'INVALID_USERNAME_PASSWORD_MESSAGE',
-        result: null,
+        data: null,
       });
     }
     
