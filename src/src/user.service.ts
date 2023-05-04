@@ -17,7 +17,7 @@ export class UserService {
     private readonly httpService: HttpService,
     private helper: UserHelper,
     private hasuraService: HasuraService,
-  ) {}
+  ) { }
   public async update(userId: string, request: any, tableName: String) {
     try {
       var axios = require('axios');
@@ -99,17 +99,23 @@ export class UserService {
       },
       data: loginData,
     };
+    try {
+      const res = await axios(configData);
+      if (res) {
+        //return res.data;
+        return response.status(200).send({
+          success: true,
+          status: 'Authenticated',
+          message: 'LOGGEDIN_SUCCESSFULLY',
+          result: res.data,
+        });
+      } else {
+        console.log("inside else")
+        
+      }
 
-    const res = await axios(configData);
-    if(res) {
-      //return res.data;
-      return response.status(200).send({
-        success: true,
-        status: 'Authenticated',
-        message: 'LOGGEDIN_SUCCESSFULLY',
-        result: res.data,
-      });
-    } else {
+    } catch (err) {
+      console.log("login api err", err)
       return response.status(401).send({
         success: false,
         status: 'Unauthorized',
@@ -411,13 +417,13 @@ export class UserService {
             .map(async (e) =>
               req[e]
                 ? await this.hasuraService.q(
-                    'qualifications',
-                    {
-                      qualification_master_id: req[e],
-                      user_id,
-                    },
-                    ['qualification_master_id', 'user_id'],
-                  )
+                  'qualifications',
+                  {
+                    qualification_master_id: req[e],
+                    user_id,
+                  },
+                  ['qualification_master_id', 'user_id'],
+                )
                 : null,
             )
             .filter((e) => e),
@@ -637,9 +643,8 @@ export class UserService {
     let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
     let fq = '';
     keys.forEach((item, index) => {
-      fq += `{${item}:{_ilike:${filter[item]}}}${
-        keys.length > index + 1 ? ',' : ''
-      }`;
+      fq += `{${item}:{_ilike:${filter[item]}}}${keys.length > index + 1 ? ',' : ''
+        }`;
     });
     return `query MyQuery{
       ${tableName}(where ${fq}, _order_by:${sortkey})
