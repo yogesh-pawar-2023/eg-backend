@@ -9,6 +9,7 @@ import { lastValueFrom, map } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { UserHelper } from './helper/userHelper';
 import { HasuraService } from './helper/hasura.service';
+import { Response } from 'express';
 @Injectable()
 export class UserService {
   public url = process.env.HASURA_BASE_URL;
@@ -16,7 +17,7 @@ export class UserService {
     private readonly httpService: HttpService,
     private helper: UserHelper,
     private hasuraService: HasuraService,
-  ) {}
+  ) { }
   public async update(userId: string, request: any, tableName: String) {
     try {
       var axios = require('axios');
@@ -82,7 +83,7 @@ export class UserService {
     }
   }
 
-  public async login(username: string, password: string) {
+  public async login(username: string, password: string, response: Response) {
     var axios = require('axios');
     var loginData = {
       username: username,
@@ -98,9 +99,31 @@ export class UserService {
       },
       data: loginData,
     };
+    try {
+      const res = await axios(configData);
+      if (res) {
+        //return res.data;
+        return response.status(200).send({
+          success: true,
+          status: 'Authenticated',
+          message: 'LOGGEDIN_SUCCESSFULLY',
+          data: res.data,
+        });
+      } else {
+        console.log("inside else")
+        
+      }
 
-    const response = await axios(configData);
-    return response.data;
+    } catch (err) {
+      console.log("login api err", err)
+      return response.status(401).send({
+        success: false,
+        status: 'Unauthorized',
+        message: 'INVALID_USERNAME_PASSWORD_MESSAGE',
+        data: null,
+      });
+    }
+    
   }
 
   public async ipUserInfo(request: any) {
@@ -236,7 +259,7 @@ export class UserService {
       enabled: 'true',
       firstName: body?.first_name,
       lastName: body?.last_name,
-      username: username,
+      username: username.toLowerCase(),
       email: body?.email_id,
       credentials: [
         {
@@ -394,13 +417,13 @@ export class UserService {
             .map(async (e) =>
               req[e]
                 ? await this.hasuraService.q(
-                    'qualifications',
-                    {
-                      qualification_master_id: req[e],
-                      user_id,
-                    },
-                    ['qualification_master_id', 'user_id'],
-                  )
+                  'qualifications',
+                  {
+                    qualification_master_id: req[e],
+                    user_id,
+                  },
+                  ['qualification_master_id', 'user_id'],
+                )
                 : null,
             )
             .filter((e) => e),
@@ -620,9 +643,8 @@ export class UserService {
     let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
     let fq = '';
     keys.forEach((item, index) => {
-      fq += `{${item}:{_ilike:${filter[item]}}}${
-        keys.length > index + 1 ? ',' : ''
-      }`;
+      fq += `{${item}:{_ilike:${filter[item]}}}${keys.length > index + 1 ? ',' : ''
+        }`;
     });
     return `query MyQuery{
       ${tableName}(where ${fq}, _order_by:${sortkey})
