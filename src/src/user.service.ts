@@ -546,6 +546,11 @@ export class UserService {
           state_id
           updated_by
           profile_url
+          state
+          district
+          block
+          village
+          grampanchayat
           program_users {
             id
             organisation_id

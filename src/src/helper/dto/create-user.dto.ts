@@ -18,7 +18,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   mobile: number;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   parent_ip: number;
 
   qualification_master_id: string;
