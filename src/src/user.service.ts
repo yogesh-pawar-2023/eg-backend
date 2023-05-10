@@ -490,6 +490,7 @@ export class UserService {
     return this.userById(user_id);
   }
 
+  // organizationInfo
   async organizationInfo(id: any) {
     const data = {
       query: `query MyQuery {
