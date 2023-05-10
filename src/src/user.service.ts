@@ -17,7 +17,7 @@ export class UserService {
     private readonly httpService: HttpService,
     private helper: UserHelper,
     private hasuraService: HasuraService,
-  ) { }
+  ) {}
   public async update(userId: string, request: any, tableName: String) {
     try {
       var axios = require('axios');
@@ -110,12 +110,10 @@ export class UserService {
           data: res.data,
         });
       } else {
-        console.log("inside else")
-        
+        console.log('inside else');
       }
-
     } catch (err) {
-      console.log("login api err", err)
+      console.log('login api err', err);
       return response.status(401).send({
         success: false,
         status: 'Unauthorized',
@@ -123,7 +121,6 @@ export class UserService {
         data: null,
       });
     }
-    
   }
 
   public async ipUserInfo(request: any) {
@@ -222,6 +219,7 @@ export class UserService {
                 created_by
                 id
                 name
+                type
                 updated_by
               }
             }
@@ -350,7 +348,7 @@ export class UserService {
       'block',
       'district',
       'state',
-      'village'
+      'village',
     ];
     let user_id = req?.id ? req?.id : null;
     const keyExist = userArr.filter((e) => objKey.includes(e));
@@ -421,13 +419,13 @@ export class UserService {
             .map(async (e) =>
               req[e]
                 ? await this.hasuraService.q(
-                  'qualifications',
-                  {
-                    qualification_master_id: req[e],
-                    user_id,
-                  },
-                  ['qualification_master_id', 'user_id'],
-                )
+                    'qualifications',
+                    {
+                      qualification_master_id: req[e],
+                      user_id,
+                    },
+                    ['qualification_master_id', 'user_id'],
+                  )
                 : null,
             )
             .filter((e) => e),
@@ -492,6 +490,7 @@ export class UserService {
     return this.userById(user_id);
   }
 
+  // organizationInfo
   async organizationInfo(id: any) {
     const data = {
       query: `query MyQuery {
@@ -616,6 +615,7 @@ export class UserService {
               created_by
               id
               name
+              type
               updated_by
             }
           }
@@ -638,23 +638,19 @@ export class UserService {
     } else {
       result = { ...result, program_faciltators: {} };
     }
-    const mappedResponse = result;
+    let mappedResponse = result;
 
-    let experience = mappedResponse.experience.filter((e) => {
-      return e.type == 'experience'
-    })
-    //console.log("experience", experience)
+    mappedResponse = {
+      ...mappedResponse,
+      ['experience']: result?.experience.filter((e) => e.type == 'experience'),
+    };
 
-    let vo_experience = mappedResponse.experience.filter((e) => {
-      return e.type == 'vo_experience'
-    })
-    //console.log("vo_experience", vo_experience)
-    if(experience) {
-      mappedResponse.experience = experience
-    }
-    if(vo_experience) {
-      mappedResponse.vo_experience = vo_experience
-    }
+    mappedResponse = {
+      ...mappedResponse,
+      ['vo_experience']: result?.experience.filter(
+        (e: any) => e.type == 'vo_experience',
+      ),
+    };
 
     return {
       statusCode: 200,
@@ -668,8 +664,9 @@ export class UserService {
     let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
     let fq = '';
     keys.forEach((item, index) => {
-      fq += `{${item}:{_ilike:${filter[item]}}}${keys.length > index + 1 ? ',' : ''
-        }`;
+      fq += `{${item}:{_ilike:${filter[item]}}}${
+        keys.length > index + 1 ? ',' : ''
+      }`;
     });
     return `query MyQuery{
       ${tableName}(where ${fq}, _order_by:${sortkey})
@@ -784,6 +781,7 @@ export class UserService {
               created_by
               id
               name
+              type
               updated_by
             }
           }
