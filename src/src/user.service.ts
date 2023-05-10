@@ -643,17 +643,17 @@ export class UserService {
     let experience = mappedResponse.experience.filter((e) => {
       return e.type == 'experience'
     })
-    console.log("experience", experience)
+    //console.log("experience", experience)
 
     let vo_experience = mappedResponse.experience.filter((e) => {
       return e.type == 'vo_experience'
     })
-    console.log("vo_experience", vo_experience)
+    //console.log("vo_experience", vo_experience)
     if(experience) {
-      mappedResponse.experience = experience[0]
+      mappedResponse.experience = experience
     }
     if(vo_experience) {
-      mappedResponse.vo_experience = vo_experience[0]
+      mappedResponse.vo_experience = vo_experience
     }
 
     return {
