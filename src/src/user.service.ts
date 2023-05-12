@@ -237,11 +237,26 @@ export class UserService {
               updated_by
               user_id
               location_type
+              location
               owner {
                 first_name
                 last_name
                 id
               }
+            }
+            events {
+              context
+              context_id
+              created_by
+              end_date
+              end_time
+              id
+              location
+              location_type
+              start_date
+              start_time
+              updated_by
+              user_id
             }
           }
         }`,
@@ -654,11 +669,26 @@ export class UserService {
             updated_by
             user_id
             location_type
+            location
             owner {
               first_name
               last_name
               id
             }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
           }
         }}`,
     };
@@ -683,7 +713,9 @@ export class UserService {
 
     mappedResponse = {
       ...mappedResponse,
-      ['experience']: result?.experience.filter((e) => e.type == 'experience'),
+      ['experience']: result?.experience.filter(
+        (e: any) => e.type == 'experience',
+      ),
     };
 
     mappedResponse = {
@@ -840,11 +872,26 @@ export class UserService {
             updated_by
             user_id
             location_type
+            location
             owner {
               first_name
               last_name
               id
             }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
           }
         }}`,
       variables: {
