@@ -223,6 +223,41 @@ export class UserService {
                 updated_by
               }
             }
+            interviews {
+              id
+              owner_user_id
+              end_date_time
+              comment
+              created_at
+              created_by
+              start_date_time
+              status
+              title
+              updated_at
+              updated_by
+              user_id
+              location_type
+              location
+              owner {
+                first_name
+                last_name
+                id
+              }
+            }
+            events {
+              context
+              context_id
+              created_by
+              end_date
+              end_time
+              id
+              location
+              location_type
+              start_date
+              start_time
+              updated_by
+              user_id
+            }
           }
         }`,
       variables: { keycloak_id: keycloak_id },
@@ -269,8 +304,6 @@ export class UserService {
       ],
       groups: ['facilitators'],
     };
-
-    console.log('data_to_create_user', data_to_create_user);
     const adminResult = await this.helper.getAdminKeycloakToken();
 
     if (adminResult?.data?.access_token) {
@@ -622,6 +655,41 @@ export class UserService {
               updated_by
             }
           }
+          interviews {
+            id
+            owner_user_id
+            end_date_time
+            comment
+            created_at
+            created_by
+            start_date_time
+            status
+            title
+            updated_at
+            updated_by
+            user_id
+            location_type
+            location
+            owner {
+              first_name
+              last_name
+              id
+            }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
+          }
         }}`,
     };
 
@@ -645,7 +713,9 @@ export class UserService {
 
     mappedResponse = {
       ...mappedResponse,
-      ['experience']: result?.experience.filter((e) => e.type == 'experience'),
+      ['experience']: result?.experience.filter(
+        (e: any) => e.type == 'experience',
+      ),
     };
 
     mappedResponse = {
@@ -773,6 +843,41 @@ export class UserService {
               type
               updated_by
             }
+          }
+          interviews {
+            id
+            owner_user_id
+            end_date_time
+            comment
+            created_at
+            created_by
+            start_date_time
+            status
+            title
+            updated_at
+            updated_by
+            user_id
+            location_type
+            location
+            owner {
+              first_name
+              last_name
+              id
+            }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
           }
         }}`,
       variables: {
