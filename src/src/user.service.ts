@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';
 import jwt_decode from 'jwt-decode';
-import { UserHelper } from './helper/userHelper';
-import { HasuraService } from './helper/hasura.service';
+import { UserHelperService } from './helper/userHelper.service';
+import { HasuraService } from './hasura/hasura.service';
 import { Response } from 'express';
 @Injectable()
 export class UserService {
   public url = process.env.HASURA_BASE_URL;
   constructor(
     private readonly httpService: HttpService,
-    private helper: UserHelper,
+    private helper: UserHelperService,
     private hasuraService: HasuraService,
   ) {}
   public async update(userId: string, request: any, tableName: String) {
@@ -270,7 +270,7 @@ export class UserService {
       groups: ['facilitators'],
     };
 
-    console.log("data_to_create_user", data_to_create_user)
+    console.log('data_to_create_user', data_to_create_user);
     const adminResult = await this.helper.getAdminKeycloakToken();
 
     if (adminResult?.data?.access_token) {
@@ -660,20 +660,6 @@ export class UserService {
       message: 'Ok.',
       data: mappedResponse,
     };
-  }
-
-  async QueryFilter(tableName: any, filter: any, sort: any) {
-    let keys = Object.keys(filter);
-    let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
-    let fq = '';
-    keys.forEach((item, index) => {
-      fq += `{${item}:{_ilike:${filter[item]}}}${
-        keys.length > index + 1 ? ',' : ''
-      }`;
-    });
-    return `query MyQuery{
-      ${tableName}(where ${fq}, _order_by:${sortkey})
-    }`;
   }
 
   async list(request: any, req: any) {
