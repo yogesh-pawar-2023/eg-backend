@@ -17,7 +17,7 @@ import {
 import { lastValueFrom, map } from 'rxjs';
 import { CreateUserDto } from './helper/dto/create-user.dto';
 import { RegisterFacilitatorDto } from './helper/dto/register-facilitator.dto';
-import { HasuraService } from './helper/hasura.service';
+import { HasuraService } from './hasura/hasura.service';
 import { UserService } from './user.service';
 import { Response } from 'express';
 
@@ -118,7 +118,7 @@ export class UserController {
   login(
     @Query('username') username: string,
     @Query('password') password: string,
-    @Res() response: Response
+    @Res() response: Response,
   ) {
     return this.userService.login(username, password, response);
   }
