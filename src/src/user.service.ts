@@ -7,17 +7,17 @@ import {
 } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';
 import jwt_decode from 'jwt-decode';
-import { UserHelper } from './helper/userHelper';
-import { HasuraService } from './helper/hasura.service';
+import { UserHelperService } from './helper/userHelper.service';
+import { HasuraService } from './hasura/hasura.service';
 import { Response } from 'express';
 @Injectable()
 export class UserService {
   public url = process.env.HASURA_BASE_URL;
   constructor(
     private readonly httpService: HttpService,
-    private helper: UserHelper,
+    private helper: UserHelperService,
     private hasuraService: HasuraService,
-  ) { }
+  ) {}
   public async update(userId: string, request: any, tableName: String) {
     try {
       var axios = require('axios');
@@ -110,12 +110,10 @@ export class UserService {
           data: res.data,
         });
       } else {
-        console.log("inside else")
-        
+        console.log('inside else');
       }
-
     } catch (err) {
-      console.log("login api err", err)
+      console.log('login api err', err);
       return response.status(401).send({
         success: false,
         status: 'Unauthorized',
@@ -123,7 +121,6 @@ export class UserService {
         data: null,
       });
     }
-    
   }
 
   public async ipUserInfo(request: any) {
@@ -222,8 +219,44 @@ export class UserService {
                 created_by
                 id
                 name
+                type
                 updated_by
               }
+            }
+            interviews {
+              id
+              owner_user_id
+              end_date_time
+              comment
+              created_at
+              created_by
+              start_date_time
+              status
+              title
+              updated_at
+              updated_by
+              user_id
+              location_type
+              location
+              owner {
+                first_name
+                last_name
+                id
+              }
+            }
+            events {
+              context
+              context_id
+              created_by
+              end_date
+              end_time
+              id
+              location
+              location_type
+              start_date
+              start_time
+              updated_by
+              user_id
             }
           }
         }`,
@@ -249,7 +282,8 @@ export class UserService {
 
   public async register(body: any, request: any) {
     const axios = require('axios');
-    const password = `@${this.helper.generateRandomPassword()}`;
+    //const password = `@${this.helper.generateRandomPassword()}`;
+    const password = body?.mobile;
     let username = `${body.first_name}`;
     if (body?.last_name) {
       username += `_${body.last_name.charAt(0)}`;
@@ -347,6 +381,10 @@ export class UserService {
       'aadhar_token',
       'keycloak_id',
       'profile_url',
+      'block',
+      'district',
+      'state',
+      'village',
     ];
     let user_id = req?.id ? req?.id : null;
     const keyExist = userArr.filter((e) => objKey.includes(e));
@@ -417,13 +455,13 @@ export class UserService {
             .map(async (e) =>
               req[e]
                 ? await this.hasuraService.q(
-                  'qualifications',
-                  {
-                    qualification_master_id: req[e],
-                    user_id,
-                  },
-                  ['qualification_master_id', 'user_id'],
-                )
+                    'qualifications',
+                    {
+                      qualification_master_id: req[e],
+                      user_id,
+                    },
+                    ['qualification_master_id', 'user_id'],
+                  )
                 : null,
             )
             .filter((e) => e),
@@ -488,6 +526,7 @@ export class UserService {
     return this.userById(user_id);
   }
 
+  // organizationInfo
   async organizationInfo(id: any) {
     const data = {
       query: `query MyQuery {
@@ -546,6 +585,11 @@ export class UserService {
           state_id
           updated_by
           profile_url
+          state
+          district
+          block
+          village
+          grampanchayat
           program_users {
             id
             organisation_id
@@ -607,8 +651,44 @@ export class UserService {
               created_by
               id
               name
+              type
               updated_by
             }
+          }
+          interviews {
+            id
+            owner_user_id
+            end_date_time
+            comment
+            created_at
+            created_by
+            start_date_time
+            status
+            title
+            updated_at
+            updated_by
+            user_id
+            location_type
+            location
+            owner {
+              first_name
+              last_name
+              id
+            }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
           }
         }}`,
     };
@@ -629,26 +709,27 @@ export class UserService {
     } else {
       result = { ...result, program_faciltators: {} };
     }
-    const mappedResponse = result;
+    let mappedResponse = result;
+
+    mappedResponse = {
+      ...mappedResponse,
+      ['experience']: result?.experience.filter(
+        (e: any) => e.type == 'experience',
+      ),
+    };
+
+    mappedResponse = {
+      ...mappedResponse,
+      ['vo_experience']: result?.experience.filter(
+        (e: any) => e.type == 'vo_experience',
+      ),
+    };
 
     return {
       statusCode: 200,
       message: 'Ok.',
       data: mappedResponse,
     };
-  }
-
-  async QueryFilter(tableName: any, filter: any, sort: any) {
-    let keys = Object.keys(filter);
-    let sortkey = `{${Object.keys(sort)[0]}:${sort[Object.keys(sort)[0]]}}`;
-    let fq = '';
-    keys.forEach((item, index) => {
-      fq += `{${item}:{_ilike:${filter[item]}}}${keys.length > index + 1 ? ',' : ''
-        }`;
-    });
-    return `query MyQuery{
-      ${tableName}(where ${fq}, _order_by:${sortkey})
-    }`;
   }
 
   async list(request: any, req: any) {
@@ -678,7 +759,7 @@ export class UserService {
             count
           }
         }
-        users(where:{${query}}, limit: $limit, offset: $offset) {
+        users(where:{${query}}, limit: $limit, offset: $offset, order_by: {created_at: desc}) {
           first_name
           id
           last_name
@@ -759,8 +840,44 @@ export class UserService {
               created_by
               id
               name
+              type
               updated_by
             }
+          }
+          interviews {
+            id
+            owner_user_id
+            end_date_time
+            comment
+            created_at
+            created_by
+            start_date_time
+            status
+            title
+            updated_at
+            updated_by
+            user_id
+            location_type
+            location
+            owner {
+              first_name
+              last_name
+              id
+            }
+          }
+          events {
+            context
+            context_id
+            created_by
+            end_date
+            end_time
+            id
+            location
+            location_type
+            start_date
+            start_time
+            updated_by
+            user_id
           }
         }}`,
       variables: {

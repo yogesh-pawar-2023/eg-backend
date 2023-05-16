@@ -13,7 +13,7 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-WORKDIR src/
+# WORKDIR src/
 
 # Creates a "dist" folder with the production build
 RUN npm run build

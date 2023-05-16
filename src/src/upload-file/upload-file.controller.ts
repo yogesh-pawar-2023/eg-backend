@@ -14,11 +14,13 @@ export class UploadFileController {
         @UploadedFile() file: Express.Multer.File,
         //@Param('id', new ParseUUIDPipe()) id: string,
         @Param('id') id: number,
+        @Body('document_type') document_type: string,
         @Res() request: Request,
         @Res() response: Response,
     ) {
         console.log("upload-file", file)
-        await this.uploadFileService.addFile(file, id, response)
+        console.log("document_type", document_type)
+        await this.uploadFileService.addFile(file, id, document_type, response)
     }
 
     @Get('/:id/get-file')

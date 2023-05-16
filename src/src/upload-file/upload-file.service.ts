@@ -10,7 +10,7 @@ export class UploadFileService {
 
     constructor(private readonly s3Service: S3Service, private readonly hasuraService: HasuraService) { }
 
-    async addFile(file: Express.Multer.File, id: number, response: Response) {
+    async addFile(file: Express.Multer.File, id: number, document_type: string, response: Response) {
         
         const originalName = file.originalname.split(" ").join("").toLowerCase()
         const [name, fileType] = originalName.split(".")
@@ -20,14 +20,10 @@ export class UploadFileService {
 
         console.log("fileUrl", fileUrl)
         if (fileUrl) {
-            let provider = 's3'
-            let document_sub_type = 'profile'
-            let doument_type = 'profile'
-            let name = key
             console.log("name 27",name)
             let query = {
                 query: `mutation MyMutation {
-                    insert_documents(objects: {name: "${name}", path: "/user/docs", provider: "${provider}", updated_by: "${id}", user_id: "${id}", doument_type: "${doument_type}", document_sub_type: "${document_sub_type}", created_by: "${id}"}) {
+                    insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_type}", created_by: "${id}"}) {
                       affected_rows
                       returning {
                         id
@@ -47,7 +43,7 @@ export class UploadFileService {
             }
             const res = await this.hasuraService.postData(query)
 
-            console.log("hasuraService", res.errors)
+            console.log("hasuraService", res)
             if(res) {
                 return response.status(200).send({
                     success: true,

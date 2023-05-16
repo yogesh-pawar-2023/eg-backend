@@ -6,22 +6,33 @@ import { GeolocationController } from './geolocation.controller';
 import { GeolocationService } from './geolocation.service';
 import { UserController } from './user.controller';
 import { ConfigModule } from '@nestjs/config';
-import { HasuraService } from './helper/hasura.service';
 import { UserService } from './user.service';
 import { EnumModule } from './enum/enum.module';
-import { UserHelper } from './helper/userHelper';
-import { UploadFileModule } from './upload-file/upload-file.module';
+import { AuthenticateModule } from './authenticate/authenticate.module';
+import { UsersModule } from './users/users.module';
+import { EventsModule } from './events/events.module';
+import { HasuraModule } from './hasura/hasura.module';
+import { HelperModule } from './helper/helper.module';
 import { S3Module } from './services/s3/s3.module';
-import { HasuraModule } from './services/hasura/hasura.module';
+import { UploadFileModule } from './upload-file/upload-file.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }),
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     {
       ...HttpModule.register({}),
       global: true,
     }, 
-    EnumModule, UploadFileModule, S3Module, HasuraModule],
+    HelperModule,
+    EnumModule,
+    AuthenticateModule,
+    UsersModule,
+    EventsModule,
+    HasuraModule,
+    S3Module,
+    UploadFileModule
+  ],
   controllers: [AppController, UserController, GeolocationController],
-  providers: [AppService, GeolocationService,HasuraService,UserService,UserHelper],
+  providers: [AppService, GeolocationService, UserService],
 })
 export class AppModule {}
