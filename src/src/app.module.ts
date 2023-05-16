@@ -13,17 +13,24 @@ import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
 import { HasuraModule } from './hasura/hasura.module';
 import { HelperModule } from './helper/helper.module';
+import { S3Module } from './services/s3/s3.module';
+import { UploadFileModule } from './upload-file/upload-file.module';
 
 @Module({
   imports: [
-    HttpModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    {
+      ...HttpModule.register({}),
+      global: true,
+    },
     HelperModule,
-    ConfigModule.forRoot(),
     EnumModule,
     AuthenticateModule,
     UsersModule,
     EventsModule,
     HasuraModule,
+    S3Module,
+    UploadFileModule,
   ],
   controllers: [AppController, UserController, GeolocationController],
   providers: [AppService, GeolocationService, UserService],
