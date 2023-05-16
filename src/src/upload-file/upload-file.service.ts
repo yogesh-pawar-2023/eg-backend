@@ -10,9 +10,12 @@ export class UploadFileService {
 
     constructor(private readonly s3Service: S3Service, private readonly hasuraService: HasuraService) { }
 
-    async addFile(file: Express.Multer.File, id: string, response: Response) {
-        const key = `${file.fieldname}${Date.now()}`;
-
+    async addFile(file: Express.Multer.File, id: number, response: Response) {
+        
+        const originalName = file.originalname.split(" ").join("").toLowerCase()
+        const [name, fileType] = originalName.split(".")
+        let key = `${name}${Date.now()}.${fileType}`;
+        console.log("key", key)
         const fileUrl = await this.s3Service.uploadFile(file, key);
 
         console.log("fileUrl", fileUrl)
@@ -21,26 +24,36 @@ export class UploadFileService {
             let document_sub_type = 'profile'
             let doument_type = 'profile'
             let name = key
+            console.log("name 27",name)
             let query = {
                 query: `mutation MyMutation {
-                            insert_documents_one(object: {provider: ${provider}, document_sub_type: ${document_sub_type}, doument_type: ${doument_type}, name: ${name}}) {
-                                provider
-                                id
-                                doument_type
-                                document_sub_type,
-                                name
-                            }
-                        }`
+                    insert_documents(objects: {name: "${name}", path: "/user/docs", provider: "${provider}", updated_by: "${id}", user_id: "${id}", doument_type: "${doument_type}", document_sub_type: "${document_sub_type}", created_by: "${id}"}) {
+                      affected_rows
+                      returning {
+                        id
+                        doument_type
+                        document_sub_type
+                        path
+                        name
+                        user_id
+                        updated_by
+                        provider
+                        created_by
+                        context_id
+                        context
+                      }
+                    }
+                  }`
             }
-            const hasuraService = await this.hasuraService.postData(query)
+            const res = await this.hasuraService.postData(query)
 
-            console.log("hasuraService", hasuraService)
-            if(hasuraService) {
+            console.log("hasuraService", res.errors)
+            if(res) {
                 return response.status(200).send({
                     success: true,
                     status: 'Success',
                     message: 'File uploaded successfully!',
-                    result: {key: key, fileUrl: fileUrl, data: hasuraService.data}
+                    result: {key: key, fileUrl: fileUrl, data: res.data}
                 })
             } else {
                 return response.status(200).send({

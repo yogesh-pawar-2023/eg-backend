@@ -13,7 +13,7 @@ export class UploadFileController {
     async addFile(
         @UploadedFile() file: Express.Multer.File,
         //@Param('id', new ParseUUIDPipe()) id: string,
-        @Param('id') id: string,
+        @Param('id') id: number,
         @Res() request: Request,
         @Res() response: Response,
     ) {
