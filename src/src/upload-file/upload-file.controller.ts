@@ -12,7 +12,6 @@ export class UploadFileController {
     @UseInterceptors(FileInterceptor('file'))
     async addFile(
         @UploadedFile() file: Express.Multer.File,
-        //@Param('id', new ParseUUIDPipe()) id: string,
         @Param('id') id: number,
         @Body('document_type') document_type: string,
         @Res() request: Request,
@@ -26,7 +25,6 @@ export class UploadFileController {
     @Get('/:id/get-file')
     @UseInterceptors(FileInterceptor('file'))
     async getFileUrl(
-        //@UploadedFile() file: Express.Multer.File,
         @Param('id') id: string,
         @Res() request: Request,
         @Res() response: Response,

@@ -42,8 +42,6 @@ export class S3Service {
             );
             console.log("response", response)
             if (response.$metadata.httpStatusCode === 200) {
-                //return `https://${bucket}.s3.${this.region}.amazonaws.com/${key}`;
-
                 const client = this.s3;
                 const command = new GetObjectCommand({ Bucket: bucket, Key: key });
                 return getSignedUrl(client, command, { expiresIn: expiresIn });

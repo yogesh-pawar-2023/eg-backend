@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { query, Response } from 'express';
+import { Response } from 'express';
 import { HasuraService } from 'src/services/hasura/hasura.service';
 import { S3Service } from 'src/services/s3/s3.service';
 
@@ -49,14 +49,14 @@ export class UploadFileService {
                     success: true,
                     status: 'Success',
                     message: 'File uploaded successfully!',
-                    result: {key: key, fileUrl: fileUrl, data: res.data}
+                    data: {key: key, fileUrl: fileUrl, data: res.data}
                 })
             } else {
                 return response.status(200).send({
                     success: false,
                     status: 'Success',
                     message: 'Unable to update documents db',
-                    result: null
+                    data: null
                 })
             }
             
@@ -65,7 +65,7 @@ export class UploadFileService {
                 success: false,
                 status: 'Success',
                 message: 'Unable to upload file',
-                result: null
+                data: null
             })
         }
     }
@@ -81,14 +81,14 @@ export class UploadFileService {
                 success: true,
                 status: 'Success',
                 message: 'File url fethed successfully!',
-                result: { key: key, fileUrl: fileUrl }
+                data: { key: key, fileUrl: fileUrl }
             })
         } else {
             return response.status(200).send({
                 success: false,
                 status: 'Success',
                 message: 'Unable to get file',
-                result: null
+                data: null
             })
         }
     }
