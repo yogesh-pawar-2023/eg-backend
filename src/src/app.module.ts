@@ -22,7 +22,7 @@ import { UploadFileModule } from './upload-file/upload-file.module';
     {
       ...HttpModule.register({}),
       global: true,
-    }, 
+    },
     HelperModule,
     EnumModule,
     AuthenticateModule,
@@ -30,7 +30,7 @@ import { UploadFileModule } from './upload-file/upload-file.module';
     EventsModule,
     HasuraModule,
     S3Module,
-    UploadFileModule
+    UploadFileModule,
   ],
   controllers: [AppController, UserController, GeolocationController],
   providers: [AppService, GeolocationService, UserService],
