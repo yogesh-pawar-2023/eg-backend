@@ -10,20 +10,27 @@ import { GeolocationController } from './geolocation.controller';
 import { GeolocationService } from './geolocation.service';
 import { HasuraModule } from './hasura/hasura.module';
 import { HelperModule } from './helper/helper.module';
+import { S3Module } from './services/s3/s3.module';
+import { UploadFileModule } from './upload-file/upload-file.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UsersModule } from './users/users.module';
 
 @Module({
     imports: [
-        HttpModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+        {
+            ...HttpModule.register({}),
+            global: true,
+        },
         HelperModule,
-        ConfigModule.forRoot(),
         EnumModule,
         AuthModule,
         UsersModule,
         EventsModule,
         HasuraModule,
+        S3Module,
+        UploadFileModule,
     ],
     controllers: [AppController, UserController, GeolocationController],
     providers: [AppService, GeolocationService, UserService],
