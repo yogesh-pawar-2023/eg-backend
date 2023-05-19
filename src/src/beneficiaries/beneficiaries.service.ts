@@ -66,27 +66,60 @@ export class BeneficiariesService {
                         created_at: desc
                       }
                     ) {
-                        first_name
                         id
+                        first_name
                         last_name
                         dob
                         aadhar_token
                         address
+                        district_id
+                         email_id
                         block_id
                         block_village_id
-                        created_by
-                        district_id
-                        email_id
+                        created_by                       
                         gender
                         lat
+                        state                      
+                        grampanchayat
+                          village
+                          block
+                          district
                         long
                         mobile
                         password
                         state_id
                         updated_by
                         profile_url
-                      beneficiaries {
+                        beneficiaries {
+                            id
+                            program_id
+                            rsos_id
+                            updated_by
+                            user_id
+                            facilitator_id
+                            created_by
+                            beneficiaries_found_at
+                          }
+                      core_beneficiaries {
+                        career_aspiration
+                        connect_via_refrence
+                        created_by
+                        device_ownership
+                        enrollement_status
+                        enrolled_for_board
+                        document_id
+                        device_type
+                        status
+                        reason_of_leaving_education
+                        previous_school_type
+                        mobile_ownership
+                        learner_wish_to_pursue_education
+                        last_standard_of_education_year
+                        last_standard_of_education
+                        last_school_type
                         id
+                        updated_by
+                        type_of_learner
                       }
                      
                     }
@@ -126,14 +159,97 @@ export class BeneficiariesService {
             };
           }    
 
-          
- 
 
- 
+ public async findOne(id: number) {
+     var data={
+        query:`query searchById {
+            users_by_pk(id: ${id}) {
+              id
+              first_name
+              last_name              
+              dob
+              mobile
+            grampanchayat
+              village
+              block
+              district
+              state
+              state_id
+              aadhar_no
+              aadhar_token
+              aadhar_verified
+              address
+              alternative_mobile_number
+              block
+              profile_url
+              block_id
+              district_id
+              email_id
+              gender
+              lat
+              long
+              block_village_id
+              beneficiaries {
+                beneficiaries_found_at
+                created_by
+                facilitator_id
+                id
+                program_id
+                rsos_id
+                updated_by
+              }
+              core_beneficiaries {
+                career_aspiration
+                updated_by
+                type_of_learner
+                status
+                reason_of_leaving_education
+                previous_school_type
+                mobile_ownership
+                learner_wish_to_pursue_education
+                last_standard_of_education_year
+                last_standard_of_education
+                last_school_type
+                id
+                connect_via_refrence
+                created_by
+                device_ownership
+                device_type
+                document_id
+                enrolled_for_board
+                enrollement_status
+              }
+            }
+          }
+          `        
+        }
+        const response = await lastValueFrom(
+            this.httpService
+              .post(this.url, data, {
+                headers: {
+                  'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+                  'Content-Type': 'application/json',
+                },
+              })
+              .pipe(map((res) => res.data)),
+          );
+          let result = response?.data?.users_by_pk;
+if(!result){
+ return {
+    statusCode: 404,
+    message:'Benificiaries Not Found',
+ }
+    
 
-  findOne(id: number) {
-    // return this.hasuraService.getOne(+id, this.table, this.returnFields);
-  }
+}
+          return {
+            statusCode: 200,
+            message: 'Ok.',
+            data: result,
+          };
+     }
+     
+  
 
   update(id: number, req: any) {
     // return this.hasuraService.update(+id, this.table, req, this.returnFields);
