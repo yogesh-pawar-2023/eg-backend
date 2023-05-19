@@ -1,10 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AgModule } from './ag/ag.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthenticateModule } from './authenticate/authenticate.module';
+import { AuthModule } from './auth/auth.module';
+import { BeneficiariesModule } from './beneficiaries/beneficiaries.module';
 import { EnumModule } from './enum/enum.module';
 import { EventsModule } from './events/events.module';
 import { GeolocationController } from './geolocation.controller';
@@ -14,7 +14,6 @@ import { HelperModule } from './helper/helper.module';
 import { S3Module } from './services/s3/s3.module';
 import { UploadFileModule } from './upload-file/upload-file.module';
 import { UserModule } from './user.module';
-import { BeneficiariesModule } from './beneficiaries/beneficiaries.module';
 
 
 @Module({
@@ -26,17 +25,15 @@ import { BeneficiariesModule } from './beneficiaries/beneficiaries.module';
         },
         HelperModule,
         EnumModule,
-        AuthenticateModule,
+        BeneficiariesModule,
+        AuthModule,
         UserModule,
         EventsModule,
         HasuraModule,
         S3Module,
         UploadFileModule,
-        AgModule,
-        BeneficiariesModule
-        
     ],
     controllers: [AppController, GeolocationController],
-    providers: [AppService, GeolocationService]
+    providers: [AppService, GeolocationService, ],
 })
 export class AppModule { }

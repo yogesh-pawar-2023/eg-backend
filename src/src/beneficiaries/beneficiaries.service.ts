@@ -17,7 +17,6 @@ export class BeneficiariesService {
     public async findAll(request: any,req:any) {
 
         const user=await this.userService.ipUserInfo(req)
-    console.log("user id==>",user.data.id)
             const { filters } = request;
             const page = request.page ? request.page : '1';
             const limit = request?.limit ? request?.limit : '10';
@@ -35,7 +34,6 @@ export class BeneficiariesService {
                 }
               });
             }
-           console.log("query",query)
             var data={
                 query:`query MyQuery($limit:Int, $offset:Int) {
                     users_aggregate( where:   
