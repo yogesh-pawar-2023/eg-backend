@@ -121,6 +121,16 @@ export class BeneficiariesService {
                         updated_by
                         type_of_learner
                       }
+                      extended_users {
+                        marital_status
+                        designation
+                        created_by
+                        id
+                        user_id
+                        updated_by
+                        social_category
+                        qualification_id
+                      }
                      
                     }
                     
@@ -145,18 +155,26 @@ export class BeneficiariesService {
             const count = response?.data?.users_aggregate?.aggregate?.count;
             const totalPages = Math.ceil(count / limit);
         
-            return {
-              statusCode: 200,
-              message: 'Ok.',
-              totalCount: count,
-              data: mappedResponse?.map((e) => ({
-                ...e,
-                ['program_faciltators']: e?.['program_faciltators']?.[0],
-              })),
-              limit,
-              currentPage: page,
-              totalPages: `${totalPages}`,
-            };
+            if(!mappedResponse || mappedResponse.length<1){
+                return {
+                    statusCode: 404,
+                    message:'Benificiaries Not Found',
+                 }
+            }else {
+                return {
+                    statusCode: 200,
+                    message: 'Ok.',
+                    totalCount: count,
+                    data: mappedResponse?.map((e) => ({
+                      ...e,
+                      ['program_faciltators']: e?.['program_faciltators']?.[0],
+                    })),
+                    limit,
+                    currentPage: page,
+                    totalPages: `${totalPages}`,
+                  };
+            }
+            
           }    
 
 
@@ -219,6 +237,16 @@ export class BeneficiariesService {
                 enrolled_for_board
                 enrollement_status
               }
+              extended_users {
+                marital_status
+                designation
+                created_by
+                id
+                user_id
+                updated_by
+                social_category
+                qualification_id
+              }
             }
           }
           `        
@@ -239,14 +267,14 @@ if(!result){
     statusCode: 404,
     message:'Benificiaries Not Found',
  }
-    
-
+}else {
+    return {
+        statusCode: 200,
+        message: 'Ok.',
+        data: result,
+      };
 }
-          return {
-            statusCode: 200,
-            message: 'Ok.',
-            data: result,
-          };
+          
      }
      
   
