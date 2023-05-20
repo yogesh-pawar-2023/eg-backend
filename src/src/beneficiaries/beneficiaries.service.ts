@@ -11,7 +11,6 @@ export class BeneficiariesService {
  
     constructor(private readonly httpService: HttpService,private userService:UserService ,private hasuraService:HasuraService){}
     public returnFields=[
-        "id",
         "status",
         "facilitator_id",
         "beneficiaries_found_at",
@@ -300,7 +299,7 @@ if(!result){
   }
  public async statusUpdate(req:any){
     console.log("req",req)
-  return await this.hasuraService.update(req.id, 'beneficiaries',req,this.returnFields);
+  return await this.hasuraService.update(req.id, 'beneficiaries',req,this.returnFields,[...this.returnFields,"id"]);
 
   }
 }
