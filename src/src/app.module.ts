@@ -13,9 +13,10 @@ import { HasuraModule } from './hasura/hasura.module';
 import { HelperModule } from './helper/helper.module';
 import { S3Module } from './services/s3/s3.module';
 import { UploadFileModule } from './upload-file/upload-file.module';
+import { FacilitatorModule } from './facilitator/facilitator.module';
+import { KeycloakModule } from './services/keycloak/keycloak.module';
+import { InterviewModule } from './interview/interview.module';
 import { UserModule } from './user.module';
-
-
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
@@ -28,12 +29,15 @@ import { UserModule } from './user.module';
         BeneficiariesModule,
         AuthModule,
         UserModule,
+        InterviewModule,
+        KeycloakModule,
+        FacilitatorModule
         EventsModule,
         HasuraModule,
         S3Module,
         UploadFileModule,
     ],
     controllers: [AppController, GeolocationController],
-    providers: [AppService, GeolocationService, ],
+    providers: [AppService, GeolocationService],
 })
 export class AppModule { }

@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
+import { lastValueFrom, map } from 'rxjs';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class HasuraService {
             
         const config: AxiosRequestConfig = {
             headers: {
-                'x-hasura-admin-secret': this.configService.get<string>('HASURA_SECRET_KEY'),
+                'x-hasura-admin-secret': this.configService.get<string>('HASURA_ADMIN_SECRET'),
                 'Content-Type': 'application/json'
             },
         };
@@ -33,6 +34,25 @@ export class HasuraService {
             return response.data;
         } catch (e) {
             console.log("post data error", e.message)
+        }
+    }
+
+    async getData(data) {
+        try {
+            let url = this.configService.get<string>('HASURA_BASE_URL');
+            let admin_secret = this.configService.get<string>('HASURA_ADMIN_SECRET');
+            return await lastValueFrom(
+                this.httpService
+                  .post(url, data, {
+                    headers: {
+                      'x-hasura-admin-secret': admin_secret,
+                      'Content-Type': 'application/json',
+                    },
+                  })
+                  .pipe(map((res) => res.data)),
+              )
+        } catch (e) {
+            console.log("get data error", e.message)
         }
     }
 }
