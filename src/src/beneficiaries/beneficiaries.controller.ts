@@ -6,12 +6,15 @@ import {
     Param,
     Patch,
     Post,
-    Req
+    Put,
+    Req,
+    UsePipes,
+    ValidationPipe
 } from '@nestjs/common';
 import { CreateEventDto } from 'src/events/dto/create-event.dto';
 import { BeneficiariesService } from './beneficiaries.service';
 
-
+import { StatusUpdateDTO } from './dto/status-update.dto';
 @Controller('beneficiaries')
 export class BeneficiariesController {
 
@@ -49,5 +52,11 @@ export class BeneficiariesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.bs.remove(+id);
+  }
+  
+  @Put('statusUpdate')
+  @UsePipes(ValidationPipe)
+  statusUpdate( @Body() request: StatusUpdateDTO) {
+    return this.bs.statusUpdate( request);
   }
 }
