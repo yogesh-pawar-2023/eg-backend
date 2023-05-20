@@ -16,25 +16,27 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UsersModule } from './users/users.module';
 import { KeycloakModule } from './services/keycloak/keycloak.module';
+import { InterviewModule } from './interview/interview.module';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        {
-            ...HttpModule.register({}),
-            global: true,
-        },
-        HelperModule,
-        EnumModule,
-        AuthModule,
-        UsersModule,
-        EventsModule,
-        HasuraModule,
-        S3Module,
-        UploadFileModule,
-        KeycloakModule,
-    ],
-    controllers: [AppController, UserController, GeolocationController],
-    providers: [AppService, GeolocationService, UserService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    {
+      ...HttpModule.register({}),
+      global: true,
+    },
+    HelperModule,
+    EnumModule,
+    AuthModule,
+    UsersModule,
+    EventsModule,
+    HasuraModule,
+    S3Module,
+    UploadFileModule,
+    InterviewModule,
+    KeycloakModule,
+  ],
+  controllers: [AppController, UserController, GeolocationController],
+  providers: [AppService, GeolocationService, UserService],
 })
-export class AppModule { }
+export class AppModule {}
