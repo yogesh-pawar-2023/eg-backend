@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';
+import { HasuraService } from 'src/hasura/hasura.service';
 import { UserService } from 'src/user.service';
 
 @Injectable()
@@ -8,8 +9,19 @@ export class BeneficiariesService {
     public url = process.env.HASURA_BASE_URL;
 
  
-    constructor(private readonly httpService: HttpService,private userService:UserService ){}
-    
+    constructor(private readonly httpService: HttpService,private userService:UserService ,private hasuraService:HasuraService){}
+    public returnFields=[
+        "id",
+        "status",
+        "facilitator_id",
+        "beneficiaries_found_at",
+        "documents_status",
+        "program_id",
+        "rsos_id",    
+        "created_by",
+        "updated_by",
+        
+    ]
     create(req: any) {
         // return this.hasuraService.create(this.table, req, this.returnFields);
       }
@@ -285,6 +297,11 @@ if(!result){
 
   remove(id: number) {
     // return this.hasuraService.delete(this.table, { id: +id });
+  }
+ public async statusUpdate(req:any){
+    console.log("req",req)
+  return await this.hasuraService.update(req.id, 'beneficiaries',req,this.returnFields);
+
   }
 }
 
