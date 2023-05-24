@@ -6,13 +6,13 @@ import { HasuraService } from '../hasura/hasura.service';
 import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { KeycloakService } from '../services/keycloak/keycloak.service';
-
 @Injectable()
 export class BeneficiariesService {
     public url = process.env.HASURA_BASE_URL;
 
  
     constructor(
+       
       private readonly httpService: HttpService,
       private userService:UserService,
       private helper: UserHelperService,
@@ -34,9 +34,9 @@ export class BeneficiariesService {
         
     ]
       
-    public async findAll(body: any,req:any) {
+    public async findAll(body: any,req:any,resp:any) {
         const user=await this.userService.ipUserInfo(req)
-      
+      console.log("user",user)
             const { status,sortType } = body;
             const page = body.page ? body.page : '1';
             const limit = body?.limit ? body?.limit : '10';
@@ -55,7 +55,7 @@ export class BeneficiariesService {
                         {
                           _and: [
                               {
-                                beneficiaries: {facilitator_id: {_eq: 101}}
+                                beneficiaries: {facilitator_id: {_eq: ${user.data.id}}}
                               },
                              ${query}
                                                   
@@ -70,7 +70,7 @@ export class BeneficiariesService {
                       {
                         _and: [
                             {
-                              beneficiaries: {facilitator_id: {_eq: 101}}
+                              beneficiaries: {facilitator_id: {_eq: ${user.data.id}}}
                             },
                             ${query} 
                             
@@ -163,15 +163,18 @@ export class BeneficiariesService {
             const totalPages = Math.ceil(count / limit);
         
             if(!mappedResponse || mappedResponse.length<1){
-                return {
-                    statusCode: 404,
-                    message:'Benificiaries Not Found',
-                 }
+              return resp.status(404).send({
+                success: false,
+                status: 'Not Found',
+                message: 'Benificiaries Not Found',
+                data: {},
+              });
             }else {
-                return {
-                    statusCode: 200,
-                    message: 'Ok.',
-                    totalCount: count,
+                  return  resp.status(200).json({
+                    success: true,
+                    message: 'Benificiaries found successfully!',
+                    data: {
+                      totalCount: count,
                     data: mappedResponse?.map((e) => ({
                       ...e,
                       ['program_faciltators']: e?.['program_faciltators']?.[0],
@@ -179,13 +182,14 @@ export class BeneficiariesService {
                     limit,
                     currentPage: page,
                     totalPages: `${totalPages}`,
-                  };
+                    },
+            })
             }
             
           }    
 
 
- public async findOne(id: number) {
+ public async findOne(id: number,resp:any) {
      var data={
         query:`query searchById {
             users_by_pk(id: ${id}) {
@@ -263,24 +267,25 @@ export class BeneficiariesService {
         }
 
         const response = await this.hasuraServiceFromServices.getData(data);
-          let {result = response?.data?.users_by_pk;
+          let result = response?.data?.users_by_pk;
 if(!result){
- return {
-    "success":  false,
-    "message": "Benificiaries Not Found",
-    "data": {}
-   
- }
+return resp.status(404).send({
+    success: false,
+    status: 'Not Found',
+    message: 'Benificiaries Not Found',
+    data: {},
+  });
+
 }else {
-    return {
-      success:true,
-        statusCode: 200,
-        message: 'Ok.',
+     return  resp.status(200).json({
+        success: true,
+        message: 'Benificiaries found successfully!',
         data: {result:result},
-      };
-}
+})
           
      }
+    }
+     
      
   
 
