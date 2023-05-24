@@ -263,17 +263,20 @@ export class BeneficiariesService {
         }
 
         const response = await this.hasuraServiceFromServices.getData(data);
-          let result = response?.data?.users_by_pk;
+          let {result = response?.data?.users_by_pk;
 if(!result){
  return {
-    statusCode: 404,
-    message:'Benificiaries Not Found',
+    "success":  false,
+    "message": "Benificiaries Not Found",
+    "data": {}
+   
  }
 }else {
     return {
+      success:true,
         statusCode: 200,
         message: 'Ok.',
-        data: result,
+        data: {result:result},
       };
 }
           
