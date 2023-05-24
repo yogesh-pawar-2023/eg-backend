@@ -1,12 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { lastValueFrom, map } from 'rxjs';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user.service';
-import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService } from '../hasura/hasura.service';
+import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { KeycloakService } from '../services/keycloak/keycloak.service';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BeneficiariesService {
@@ -36,13 +35,9 @@ export class BeneficiariesService {
     ]
       
     public async findAll(body: any,req:any) {
-
-      // try {
         const user=await this.userService.ipUserInfo(req)
-      // } catch (error) {
-      //   throw new UnauthorizedException();
-      // }
-            const { filters } = body;
+      
+            const { status,sortType } = body;
             const page = body.page ? body.page : '1';
             const limit = body?.limit ? body?.limit : '10';
         
@@ -50,24 +45,20 @@ export class BeneficiariesService {
             if (page > 1 && limit) {
               offset = parseInt(limit) * (page - 1);
             }
-        
-            let query = '';
-            if (filters) {
-              Object.keys(filters).forEach((e) => {
-                if (filters[e] && filters[e] != '') {
-                  query += `{${e}:{_eq:"${filters[e]}"} }`;
-                }
-              });
-            }
+            let query =''
+        if(status){
+          let query = `{beneficiaries:{status:{_eq:${status}}}}`;
+        }
             var data={
                 query:`query MyQuery($limit:Int, $offset:Int) {
                     users_aggregate( where:   
                         {
                           _and: [
                               {
-                                beneficiaries: {facilitator_id: {_eq: ${user.data.id}}}
+                                beneficiaries: {facilitator_id: {_eq: 101}}
                               },
-                              ${query}                           
+                             ${query}
+                                                  
                           ]
                         }){
                           aggregate{
@@ -79,16 +70,16 @@ export class BeneficiariesService {
                       {
                         _and: [
                             {
-                              beneficiaries: {facilitator_id: {_eq: ${user.data.id}}}
+                              beneficiaries: {facilitator_id: {_eq: 101}}
                             },
-                            ${query}
+                            ${query} 
                             
                         ]
                       },
                       limit: $limit,
                       offset: $offset,
                       order_by: {
-                        created_at: desc
+                        created_at: ${sortType}
                       }
                     ) {
                         id
@@ -115,10 +106,12 @@ export class BeneficiariesService {
                         state_id
                         updated_by
                         profile_url
-                        beneficiaries {
+                        beneficiaries{
                             id
                             program_id
-                            rsos_id
+                            enrollment_number
+                            status
+                          documents_status
                             updated_by
                             user_id
                             facilitator_id
@@ -162,9 +155,7 @@ export class BeneficiariesService {
                          
                   }`
             }
-
             const response = await this.hasuraServiceFromServices.getData(data);
-        
             let result = response?.data?.users;
         
             let mappedResponse = result;
@@ -224,13 +215,16 @@ export class BeneficiariesService {
               long
               block_village_id
               beneficiaries {
-                beneficiaries_found_at
-                created_by
-                facilitator_id
                 id
                 program_id
-                rsos_id
+                enrollment_number
+                status
+              documents_status
                 updated_by
+                user_id
+                facilitator_id
+                created_by
+                beneficiaries_found_at
               }
               core_beneficiaries {
                 career_aspiration
