@@ -36,7 +36,6 @@ export class BeneficiariesService {
       
     public async findAll(body: any,req:any,resp:any) {
         const user=await this.userService.ipUserInfo(req)
-      console.log("user",user)
             const { status,sortType } = body;
             const page = body.page ? body.page : '1';
             const limit = body?.limit ? body?.limit : '10';
