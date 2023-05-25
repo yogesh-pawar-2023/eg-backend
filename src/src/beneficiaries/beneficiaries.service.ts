@@ -712,9 +712,10 @@ return resp.status(404).send({
     const response = await this.hasuraServiceFromServices.getData(data);
     let result = response?.data?.users_by_pk;
     let mappedResponse = result;
-    return {
-      message: 'User data fetched successfully.',
-      data: mappedResponse,
-    };
+    return response.status(200).json({
+      success: true,
+      message: "User data fetched successfully!",
+      data: mappedResponse
+      });
   }
 }
