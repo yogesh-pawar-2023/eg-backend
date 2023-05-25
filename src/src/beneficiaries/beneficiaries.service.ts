@@ -106,16 +106,22 @@ export class BeneficiariesService {
                         updated_by
                         profile_url
                         beneficiaries{
-                            id
-                            program_id
-                            enrollment_number
-                            status
-                          documents_status
-                            updated_by
-                            user_id
-                            facilitator_id
-                            created_by
-                            beneficiaries_found_at
+                          id
+                          enrollment_status
+                          enrolled_for_board
+                          type_of_enrollement 
+                          subjects
+                          academic_year_id
+                    payment_receipt_document_id
+                          program_id
+                          enrollment_number
+                          status
+                        documents_status
+                          updated_by
+                          user_id
+                          facilitator_id
+                          created_by
+                          beneficiaries_found_at
                           }
                       core_beneficiaries {
                         career_aspiration
@@ -219,6 +225,12 @@ export class BeneficiariesService {
               block_village_id
               beneficiaries {
                 id
+                enrollment_status
+                enrolled_for_board
+                type_of_enrollement 
+                subjects
+                academic_year_id
+          payment_receipt_document_id
                 program_id
                 enrollment_number
                 status
@@ -420,6 +432,20 @@ return resp.status(404).send({
           'career_aspiration',
           'career_aspiration_details'
         ]
+      },
+      'enrollement':{
+        'beneficiaries':[
+          "enrollment_number",
+          "user_id",
+          "enrollment_status",
+          "enrolled_for_board",
+          "type_of_enrollement", 
+          "subjects" ,
+          "program_id",
+          "facilitator_id",
+          'academic_year_id',
+          "payment_receipt_document_id"
+        ]
       }
     }
     
@@ -540,6 +566,30 @@ return resp.status(404).send({
         );
         break;
       }
+      case 'enrollement':{
+        // Update enrollement data in Beneficiaries table 
+                const userArr = PAGE_WISE_UPDATE_TABLE_DETAILS.enrollement.beneficiaries;
+        
+              const programDetails=beneficiaryUser.beneficiaries.find((data) => req.user_id==data.user_id&&req.academic_year_id==data.academic_year_id)
+             let tableName = 'beneficiaries';
+             
+                 await this.hasuraService.q(
+                  tableName,
+                  {
+                  ...req,
+                    id: programDetails?.id
+                      ? programDetails.id
+                      : null,
+                    user_id: user_id,
+        
+                    subjects:JSON.stringify(req.subjects)
+                  },
+                  userArr,
+                  update,
+                );
+                
+              }  
+        
     }
     return this.userById(user_id);
   }
@@ -604,8 +654,16 @@ return resp.status(404).send({
             created_by
             facilitator_id
             id
+            academic_year_id
+            id
+            enrollment_number
+            enrollment_status
+            enrolled_for_board
+            type_of_enrollement
+            subjects
+            payment_receipt_document_id
             program_id
-            rsos_id
+            
             updated_by
           }
           core_beneficiaries {
@@ -652,18 +710,12 @@ return resp.status(404).send({
     };
 
     const response = await this.hasuraServiceFromServices.getData(data);
-
     let result = response?.data?.users_by_pk;
-    if (result?.beneficiaries && result?.beneficiaries[0]) {
-      result.beneficiaries = result.beneficiaries[0];
-    } else {
-      result = { ...result, beneficiaries: {} };
-    }
     let mappedResponse = result;
-
-    return {
-      message: 'User data fetched successfully.',
-      data: mappedResponse,
-    };
+    return response.status(200).json({
+      success: true,
+      message: "User data fetched successfully!",
+      data: mappedResponse
+      });
   }
 }
