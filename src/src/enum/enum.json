@@ -132,7 +132,7 @@
   "DOCUMENT_STATUS":[
 {"title":"NOT_AVAILABLE","value":"not_available"},
 {"title":"UPDATE_REQUIRED","value":"update_required"},
-{"title":"APPLIED_NEW/FOR_CHANGE","value":"applied_new/for_change"},
+{"title":"APPLIED_NEW_FOR_CHANGE","value":"applied_new_for_change"},
 {"title":"COMPLETE","value":"complete"}
 
   ],
