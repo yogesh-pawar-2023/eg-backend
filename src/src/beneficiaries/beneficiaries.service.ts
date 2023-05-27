@@ -24,11 +24,19 @@ export class BeneficiariesService {
 
     public returnFields=[
         "status",
-        "facilitator_id",
+        "user_id",
+        "enrollment_number",
         "beneficiaries_found_at",
         "documents_status",
+        "enrollment_status",
+        "enrolled_for_board",
+        "type_of_enrollement",
+        "academic_year_id",
+        "payment_receipt_document_id",
+        "facilitator_id",
+        "documents_status",
         "program_id",
-        "rsos_id",    
+        "reason_for_status_update",   
         "created_by",
         "updated_by",
         
