@@ -569,7 +569,7 @@ export class UserService {
     };
   }
 
-  async userById(id: any,resp:any={}) {
+  async userById(id: any,resp?:any) {
     var data = {
       query: `query searchById {        
         users_by_pk(id:${id}) {
@@ -763,6 +763,7 @@ export class UserService {
       };
     }
     if(resp){
+      console.log("if")
  return resp.status(200).send({
       success: true,
       message: 'Data Fetched Successfully',
