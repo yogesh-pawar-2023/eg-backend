@@ -569,7 +569,7 @@ export class UserService {
     };
   }
 
-  async userById(id: any) {
+  async userById(id: any,resp:any={}) {
     var data = {
       query: `query searchById {        
         users_by_pk(id:${id}) {
@@ -762,12 +762,23 @@ export class UserService {
         ),
       };
     }
-    
-    return {
-      statusCode: 200,
-      message: 'Ok.',
-      data: mappedResponse,
-    };
+    if(resp){
+ return resp.status(200).send({
+      success: true,
+      message: 'Data Fetched Successfully',
+      data: {
+      data:mappedResponse
+    }
+    });
+    }else {
+      return {
+        statusCode: 200,
+        message: 'Ok.',
+        data: mappedResponse,
+      };
+    }
+   
+       
   }
 
   async list(request: any, req: any) {
