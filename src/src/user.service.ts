@@ -572,11 +572,13 @@ export class UserService {
   async userById(id: any) {
     var data = {
       query: `query searchById {        
-        users_by_pk(id: ${id}) {
+        users_by_pk(id:${id}) {
           first_name
           id
           last_name
           dob
+    middle_name
+    alternative_mobile_number
           aadhar_token
           address
           block_id
@@ -606,6 +608,15 @@ export class UserService {
             status
             user_id
           }
+    extended_users{
+      id
+      marital_status
+      qualification_id
+      designation
+      social_category
+      created_by
+      updated_by
+    }
           core_faciltator {
             created_by
             device_ownership
@@ -627,6 +638,16 @@ export class UserService {
             role_title
             user_id
             type
+            reference{
+              id
+              name
+              context
+              context_id
+              contact_number
+              document_id       
+              type_of_document
+              designation          
+            }
           }
           program_faciltators {
             parent_ip
@@ -700,9 +721,10 @@ export class UserService {
           documents(order_by: {id: desc}){
             id
             user_id
-            name
-            doument_type
-            document_sub_type
+            name   
+                document_sub_type
+                context
+                context_id
           }
         }}`,
     };
@@ -741,7 +763,6 @@ export class UserService {
       };
     }
     
-
     return {
       statusCode: 200,
       message: 'Ok.',
