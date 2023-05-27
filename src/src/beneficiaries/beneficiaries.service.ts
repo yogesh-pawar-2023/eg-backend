@@ -34,7 +34,6 @@ export class BeneficiariesService {
         "academic_year_id",
         "payment_receipt_document_id",
         "facilitator_id",
-        "beneficiaries_found_at",
         "documents_status",
         "program_id",
         "reason_for_status_update",   
