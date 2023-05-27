@@ -25,8 +25,6 @@ export class BeneficiariesService {
     public returnFields=[
         "status",
         "user_id",
-        "facilitator_id",
-        "facilitator_id",
         "enrollment_number",
         "beneficiaries_found_at",
         "documents_status",
