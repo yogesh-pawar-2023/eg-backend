@@ -165,32 +165,40 @@ export class BeneficiariesService {
                         updated_by
                         profile_url
                         beneficiaries{
-                          id
-                          enrollment_status
-                          enrolled_for_board
-                          type_of_enrollement 
-                          subjects
-                          academic_year_id
-                    payment_receipt_document_id
-                          program_id
-                          enrollment_number
-                          status
-                        documents_status
-                          updated_by
-                          user_id
-                          facilitator_id
-                          created_by
-                          beneficiaries_found_at
-                          }
-                      core_beneficiaries {
-                        career_aspiration
-                        connect_via_refrence
-                        created_by
-                        device_ownership
-                        enrollement_status
+                        id
+                        enrollment_status
                         enrolled_for_board
-                        document_id
-                        device_type
+                        type_of_enrollement 
+                        subjects
+                        academic_year_id
+                        payment_receipt_document_id
+                        program_id
+                        enrollment_number
+                        status
+                        reason_for_status_update
+                        documents_status
+                        document_checklist
+                        updated_by
+                        user_id
+                        facilitator_id
+                        created_by
+                        beneficiaries_found_at
+                          }
+                          core_beneficiaries {
+                        career_aspiration
+                        updated_by
+                        mark_as_whatsapp_number
+                        alternative_device_ownership
+                        alternative_device_type
+                        father_first_name
+                        father_middle_name
+                        father_last_name
+                        mother_first_name
+                        mother_last_name
+                        mother_middle_name
+                        career_aspiration_details
+                        enrollment_number
+                        type_of_learner
                         status
                         reason_of_leaving_education
                         previous_school_type
@@ -200,8 +208,13 @@ export class BeneficiariesService {
                         last_standard_of_education
                         last_school_type
                         id
-                        updated_by
-                        type_of_learner
+                        connect_via_refrence
+                        created_by
+                        device_ownership
+                        device_type
+                        document_id
+                        enrolled_for_board
+                        enrollement_status
                       }
                       extended_users {
                         marital_status
@@ -252,6 +265,7 @@ export class BeneficiariesService {
   }
 
   public async findOne(id: number, resp: any) {
+    console.log("id",id)
     var data = {
       query: `query searchById {
             users_by_pk(id: ${id}) {
@@ -288,11 +302,13 @@ export class BeneficiariesService {
                 type_of_enrollement 
                 subjects
                 academic_year_id
-          payment_receipt_document_id
+                payment_receipt_document_id
                 program_id
                 enrollment_number
                 status
-              documents_status
+                reason_for_status_update
+                documents_status
+                document_checklist
                 updated_by
                 user_id
                 facilitator_id
@@ -302,6 +318,17 @@ export class BeneficiariesService {
               core_beneficiaries {
                 career_aspiration
                 updated_by
+                mark_as_whatsapp_number
+                alternative_device_ownership
+                alternative_device_type
+                father_first_name
+                father_middle_name
+                father_last_name
+                mother_first_name
+                mother_last_name
+                mother_middle_name
+                career_aspiration_details
+                enrollment_number
                 type_of_learner
                 status
                 reason_of_leaving_education
