@@ -373,22 +373,22 @@ export class AuthService {
       });
     }
   }
-  public async createOkycRequest(body, request) {
-    return await this.adharVerificationService.createOkycRequest(body,request);
+  public async createOkycRequest(body, request,response) {
+    return await this.adharVerificationService.createOkycRequest(body,request,response);
   }
 
-  public async initiateOkycRequest(id, request) {
-    return await this.adharVerificationService.initiateOkycRequest(id,request);
+  public async initiateOkycRequest(id, request,response) {
+    return await this.adharVerificationService.initiateOkycRequest(id,request,response);
   }
-  public async verifyOkycRequest(id,body,request) {
-    return await this.adharVerificationService.verifyOkycRequest(id,body,request);
+  public async verifyOkycRequest(id,body,request,response) {
+    return await this.adharVerificationService.verifyOkycRequest(id,body,request,response);
   }
-  public async completeOkycRequest(id,body,request) {
-    return await this.adharVerificationService.completeOkycRequest(id,body,request);
+  public async completeOkycRequest(id,body,request,response) {
+    return await this.adharVerificationService.completeOkycRequest(id,body,request,response);
   }
 
-  public async getOkycStatusRequest(id,shareCode,request) {
-    return await this.adharVerificationService.getOkycStatusRequest(id,shareCode,request);
+  public async getOkycStatusRequest(id,shareCode,request,response) {
+    return await this.adharVerificationService.getOkycStatusRequest(id,shareCode,request,response);
   }
   
   public async register(body, response) {

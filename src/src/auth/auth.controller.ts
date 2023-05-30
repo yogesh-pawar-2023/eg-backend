@@ -76,33 +76,35 @@ export class AuthController {
     @UseGuards(new AuthGuard())
     @UsePipes(ValidationPipe)
     private async createOkycRequest (
-        @Body() body,
-        @Req() request:any
+    @Body() body,
+    @Req() request:any,
+     @Res() response: Response
         
     ) {
-        return this.authService.createOkycRequest(body, request);
+        return this.authService.createOkycRequest(body, request,response);
     }
 
     @Get('/okyc/:requestId/initiate/')
     @UseGuards(new AuthGuard())
     @UsePipes(ValidationPipe)    
     private async initiateOkycRequest (
-        @Param('requestId') id: string,     
-        @Req() request:any
+    @Param('requestId') id: string,     
+    @Req() request:any,
+    @Res() response: Response
     ) {
-        return this.authService.initiateOkycRequest(id, request);
+        return this.authService.initiateOkycRequest(id, request,response);
     }
 
     @Post('/okyc/:requestId/verify/')
     @UseGuards(new AuthGuard())
     @UsePipes(ValidationPipe)    
     private async verifyOkycRequest (
-        @Param('requestId') id: string, 
-        @Body() body,
-        @Req() request:any
-        
+    @Param('requestId') id: string, 
+    @Body() body,
+    @Req() request:any,
+    @Res() response: Response     
     ) {
-        return this.authService.verifyOkycRequest(id,body,request);
+        return this.authService.verifyOkycRequest(id,body,request,response);
     }
 
     @Post('/okyc/:requestId/complete/')
@@ -111,10 +113,10 @@ export class AuthController {
     private async completeOkycRequest (
         @Param('requestId') id: string, 
         @Body() body,
-        @Req() request:any
-        
+        @Req() request:any,
+        @Res() response: Response
     ) {
-        return this.authService.completeOkycRequest(id,body,request);
+        return this.authService.completeOkycRequest(id,body,request,response);
     }
 
     @Get('/okyc/:requestId/:shareCode/')
@@ -123,9 +125,9 @@ export class AuthController {
     private async getOkycStatusRequest (
         @Param('requestId') id: string, 
         @Param('shareCode') shareCode: number, 
-        @Req() request:any
-        
+        @Req() request:any,
+        @Res() response: Response  
     ) {
-        return this.authService.getOkycStatusRequest(id,shareCode,request);
+        return this.authService.getOkycStatusRequest(id,shareCode,request,response);
     }
 }
