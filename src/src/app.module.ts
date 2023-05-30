@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AdharVerificationModule } from './adhar_verification/adhar_verification.module';
+import { AadhaarKycModule } from './aadhaar_kyc/aadhaar_kyc.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AttendancesModule } from './attendances/attendances.module';
@@ -41,7 +41,7 @@ import { UserModule } from './user.module';
     UploadFileModule,
     AttendancesModule,
     KeycloakModule,
-    AdharVerificationModule,
+    AadhaarKycModule,
     SubjectsModule,
   ],
   controllers: [AppController, GeolocationController],
