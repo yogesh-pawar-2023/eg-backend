@@ -165,23 +165,24 @@ export class BeneficiariesService {
                         updated_by
                         profile_url
                         beneficiaries{
-                          id
-                          enrollment_status
-                          enrolled_for_board
-                          type_of_enrollement 
-                          subjects
-                          academic_year_id
-                          reason_for_status_update
-                          payment_receipt_document_id
-                          program_id
-                          enrollment_number
-                          status
-                          documents_status
-                          updated_by
-                          user_id
-                          facilitator_id
-                          created_by
-                          beneficiaries_found_at
+                        id
+                        enrollment_status
+                        enrolled_for_board
+                        type_of_enrollement 
+                        subjects
+                        academic_year_id
+                        payment_receipt_document_id
+                        program_id
+                        enrollment_number
+                        status
+                        reason_for_status_update
+                        documents_status
+                        document_checklist
+                        updated_by
+                        user_id
+                        facilitator_id
+                        created_by
+                        beneficiaries_found_at
                           }
                           core_beneficiaries {
                         career_aspiration
@@ -264,6 +265,7 @@ export class BeneficiariesService {
   }
 
   public async findOne(id: number, resp: any) {
+    console.log("id",id)
     var data = {
       query: `query searchById {
             users_by_pk(id: ${id}) {
@@ -306,7 +308,7 @@ export class BeneficiariesService {
                 status
                 reason_for_status_update
                 documents_status
-                document_cheklist
+                document_checklist
                 updated_by
                 user_id
                 facilitator_id
