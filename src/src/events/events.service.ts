@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import jwt_decode from 'jwt-decode';
 import { HasuraService } from 'src/services/hasura/hasura.service';
 import { UserService } from 'src/user.service';
+import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 
 @Injectable()
 export class EventsService {
@@ -49,7 +50,9 @@ export class EventsService {
     'date_time',
     'updated_by', 
   ];
-  constructor(private readonly hasuraService: HasuraService,private readonly userService:UserService) { }
+  constructor(private readonly hasuraService: HasuraService,
+    private hasuraServiceFromServices: HasuraServiceFromServices,
+    private readonly userService:UserService) { }
 
   public async create(req, header, response) {
     let user_id_arr = req.attendees
@@ -173,8 +176,59 @@ export class EventsService {
     return this.hasuraService.findAll(this.table, request);
   }
 
-  findOne(id: number) {
-    return this.hasuraService.getOne(+id, this.table, this.returnFields);
+ public async findOne(id: number,resp:any) {
+  var data = {
+    query:`query searchById {
+      events_by_pk(id: ${id}) {
+         reminders
+        name
+        end_date
+        created_by
+        context_id
+        context
+        end_time
+        id
+        location
+        location_type
+        start_date
+        start_time
+        type
+        updated_by
+        user_id
+        attendances {
+          created_by
+          context
+          context_id
+          date_time
+          id
+          lat
+          user_id
+          updated_by
+          status
+          long
+          rsvp
+        }
+       
+      }
+    }
+    `
+  }
+    const response = await this.hasuraServiceFromServices.getData(data);
+    let result = response?.data?.events_by_pk;
+    if (!result) {
+      return resp.status(404).send({
+        success: false,
+        status: 'Not Found',
+        message: 'Event Not Found',
+        data: {},
+      });
+    } else {
+      return resp.status(200).json({
+        success: true,
+        message: 'Event found successfully!',
+        data: { event: result },
+      });
+    }
   }
 
   update(id: number, req: any) {
