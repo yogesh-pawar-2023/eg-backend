@@ -1,9 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { it } from 'node:test';
-import { HasuraService } from 'src/services/hasura/hasura.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { Injectable } from '@nestjs/common';
 import jwt_decode from 'jwt-decode';
+import { HasuraService } from 'src/services/hasura/hasura.service';
+import { UserService } from 'src/user.service';
 
 @Injectable()
 export class EventsService {
@@ -23,6 +21,7 @@ export class EventsService {
   ];
   public returnFields = [
     'id',
+    'name',
     'context',
     'context_id',
     'created_by',
@@ -34,78 +33,84 @@ export class EventsService {
     'start_time',
     'updated_by',
     'user_id',
+    "reminders"
   ];
-  constructor(private readonly hasuraService: HasuraService) { }
+
+  public attendancesReturnFields = [
+    'id',
+    'user_id',
+    'context_id',
+    'created_by',
+    'context',
+    'status',
+    'lat',
+    'long',
+    'rsvp',
+    'date_time',
+    'updated_by', 
+  ];
+  constructor(private readonly hasuraService: HasuraService,private readonly userService:UserService) { }
 
   public async create(req, header, response) {
-    //get keycloak id from token
-    console.log("req", req)
-    const authToken = header.header("authorization");
-    const decoded: any = jwt_decode(authToken);
-    let keycloak_id = decoded.sub;
-    console.log("keycloak_id", keycloak_id)
-    //get userid
-    let query2 = {
-      query: `query MyQuery {
-                users(where: {keycloak_id: {_eq: "${keycloak_id}" }}) {
-                  id
-                  keycloak_id
-                }
-              }`
+    let user_id_arr = req.attendees
+    const userDetail = await this.userService.ipUserInfo(header);
+    let user_id = userDetail.data.id
+    let obj = {
+      "context_id":req?.context_id,
+      "context":req?.context,
+      "user_id": user_id,
+      "name":req.name,
+      "created_by": user_id,
+      "end_date": req.end_date,
+      "end_time": req.end_time,
+      "location": req.location,
+      "location_type": req.location_type,
+      "start_date": req.start_date,
+      "start_time": req.start_time,
+      "updated_by": user_id,
+      "type": req.type,
+      "reminders": JSON.stringify(req.reminders).replace(/"/g,'\\"')
     }
-    const user = await this.hasuraService.postData(query2)
-    console.log("user", user.data.users[0])
-    let user_id = user.data.users[0].id
-    console.log("user_id", user_id)
-    console.log("req", req)
-    let user_id_arr = req.user_id
+   const eventResult=await this.hasuraService.create(this.table, obj,this.returnFields)
 
+   if(eventResult){
+    const promises = []
     const query = []
-
     for (const iterator of user_id_arr) {
-
       let obj = {
         "user_id": iterator,
-        "created_by": user_id,
-        "end_date": req.end_date,
-        "end_time": req.end_time,
-        "location": req.location,
-        "location_type": req.location_type,
-        "start_date": req.start_date,
-        "start_time": req.start_time,
-        "updated_by": user_id,
-        "type": req.type,
+        "created_by": eventResult.events.user_id,
+        "context_id":eventResult.events.id,
+        "context":"events",
+         "updated_by": user_id,   
       }
-
-      console.log("obj")
       query.push(obj)
     }
-
-    console.log("query", query)
-
-    const promises = []
-
     for (const iterator of query) {
-      promises.push(this.hasuraService.create(this.table, iterator, this.returnFields))
+      promises.push(this.hasuraService.create('attendance', iterator, this.attendancesReturnFields))
     }
-
     const createEvents = await Promise.all(promises)
 
-    console.log("createEvents", createEvents)
-
-    if (createEvents) {
+  if (createEvents) {
       return response.status(200).send({
         success: true,
-        message: 'Events created successfully!',
-        data: createEvents,
+        message: 'Event created successfully!',
+        data: {events:eventResult.events,attendances:createEvents},
       });
     } else {
-      return response.status(200).send({
+      return response.status(500).send({
         success: false,
-        message: 'Unable to create events!',
+        message: 'Unable to create Event!',
         data: {},
       });
     }
+   }else {
+    return response.status(500).send({
+              success: false,
+              message: 'Unable to create Event!',
+              data: {},
+            });
+   }
   }
 
   public async getEventsList(req, header, response) {
