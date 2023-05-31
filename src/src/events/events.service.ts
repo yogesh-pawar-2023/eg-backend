@@ -56,8 +56,8 @@ export class EventsService {
     const userDetail = await this.userService.ipUserInfo(header);
     let user_id = userDetail.data.id
     let obj = {
-      "context_id":req?.context_id,
-      "context":req?.context,
+      ...(req?.context_id && { context_id: req?.context_id }),
+      ...(req?.context && { context: req?.context }),
       "user_id": user_id,
       "name":req.name,
       "created_by": user_id,
@@ -71,8 +71,8 @@ export class EventsService {
       "type": req.type,
       "reminders": JSON.stringify(req.reminders).replace(/"/g,'\\"')
     }
+   
    const eventResult=await this.hasuraService.create(this.table, obj,this.returnFields)
-
    if(eventResult){
     const promises = []
     const query = []
