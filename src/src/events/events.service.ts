@@ -36,7 +36,7 @@ export class EventsService {
     "reminders"
   ];
 
-  public attendancesReturnFields = [
+  public attendanceReturnFields = [
     'id',
     'user_id',
     'context_id',
@@ -87,15 +87,15 @@ export class EventsService {
       query.push(obj)
     }
     for (const iterator of query) {
-      promises.push(this.hasuraService.create('attendance', iterator, this.attendancesReturnFields))
+      promises.push(this.hasuraService.create('attendance', iterator, this.attendanceReturnFields))
     }
-    const createEvents = await Promise.all(promises)
+    const createAttendees = await Promise.all(promises)
 
-  if (createEvents) {
+  if (createAttendees) {
       return response.status(200).send({
         success: true,
         message: 'Event created successfully!',
-        data: {events:eventResult.events,attendances:createEvents},
+        data: {events:eventResult.events,attendance:createAttendees},
       });
     } else {
       return response.status(500).send({
