@@ -104,12 +104,12 @@ export class BeneficiariesService {
       offset = parseInt(limit) * (page - 1);
     }
     let query = '';
-    if (status) {
+    if (status && status !== "") {
          query = `{program_beneficiaries:{status:{_eq:${status}}}}`;
     }
     let search='';
 
-    if(body.search){
+    if(body.search && body.search !== ""){
      search=`{_or: [
         { first_name: { _ilike: "%${body.search}%" } },
         { last_name: { _ilike: "%${body.search}%" } }
