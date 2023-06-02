@@ -1,16 +1,16 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Req,
+	Res,
+	UseGuards,
+	UsePipes,
+	ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -61,6 +61,16 @@ export class EventsController {
 	) {
 		return this.eventsService.update(+id, header, request, response);
 	}
+
+  @Patch('/attendance/:id')
+	updateAttendanceDetail(
+		@Param('id') id: string,
+		@Body() request: Record<string, any>,
+		@Res() response: Response,
+	) {
+		return this.eventsService.updateAttendanceDetail(+id, request, response);
+	}
+	
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
