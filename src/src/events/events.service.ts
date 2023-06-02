@@ -86,7 +86,7 @@ export class EventsService {
         "created_by": eventResult.events.user_id,
         "context_id":eventResult.events.id,
         "context":"events",
-         "updated_by": user_id,   
+         "updated_by": eventResult.events.user_id,   
       }
       query.push(obj)
     }
@@ -225,8 +225,83 @@ let mappedData= createAttendees.map(data=> data.attendance)
     }
   }
 
-  update(id: number, req: any) {
-    return this.hasuraService.update(+id, this.table, req, this.returnFields);
+public async  update(id: number, req: any,resp:any) {
+
+  try{
+    let attendees=req.attendees;
+
+    if(attendees && attendees.length>0){
+      const data={
+        query:`query MyQuery {
+          events(where: {id: {_eq: ${id}}}){
+            id
+            user_id
+            name
+            created_by
+            updated_by
+            attendances{
+              id
+              user_id
+            }
+          }
+        }`
+      }
+      const response = await this.hasuraServiceFromServices.getData(data);
+        let eventDetails=response?.data.events[0]
+        let mappedData=response?.data.events.map(data=> data.attendances)
+        if(response){
+          //remove attendees in current event
+          const deletePromise=[]
+          const deleteAttendees=mappedData[0].filter(data=> !req.attendees.includes(data.user_id))
+          if(deleteAttendees&&deleteAttendees.length>0){
+            for (const iterator of deleteAttendees) {
+              deletePromise.push( this.hasuraService.delete('attendance', { id: +iterator.id }))
+            }
+            const removeAttendees = await Promise.all(deletePromise)           
+          }
+          
+          //add new attendees in current event
+          const tempArray=mappedData[0].map(data=> data.user_id )
+          const addAttendees=req.attendees.filter(data=> !tempArray.includes(data))
+          if(addAttendees &&addAttendees.length>0){
+            const promises = []
+            const query = []
+            for (const iterator of addAttendees) {
+              let obj = {
+                "user_id": iterator,
+                "created_by": eventDetails.created_by,
+                "context_id":id,
+                "context":"events",
+                 "updated_by": eventDetails.updated_by,   
+              }
+              query.push(obj)
+            }
+            for (const iterator of query) {
+              promises.push(this.hasuraService.create('attendance', iterator, this.attendanceReturnFields))
+            }
+            const createAttendees = await Promise.all(promises)
+          }   
+        }   
+    }
+    //update events fields 
+    const newRequest= {...req,
+      ...(req.reminders && { reminders: JSON.stringify(req.reminders).replace(/"/g,'\\"')})} 
+
+      const updatedResult=await this.hasuraService.update(+id, this.table, newRequest, this.returnFields);
+      return  resp.status(200).send({
+        success: true,
+        message: 'Event Updated Successfully',
+        data: {events:updatedResult.events},
+      });
+  }catch(error){
+    return  resp.status(500).send({
+              success: false,
+              message: error.message,
+              data: {},
+            });
+  }
+
+    
   }
 
   remove(id: number) {
