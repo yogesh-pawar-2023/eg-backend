@@ -53,6 +53,7 @@ export class EventsController {
 	}
 
 	@Patch(':id')
+	@UseGuards(new AuthGuard())
 	update(
 		@Param('id') id: string,
 		@Req() header: Request,
