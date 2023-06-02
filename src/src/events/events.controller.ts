@@ -62,15 +62,18 @@ export class EventsController {
 		return this.eventsService.update(+id, header, request, response);
 	}
 
-  @Patch('/attendance/:id')
+	@Patch('/attendance/:id')
 	updateAttendanceDetail(
 		@Param('id') id: string,
 		@Body() request: Record<string, any>,
 		@Res() response: Response,
 	) {
-		return this.eventsService.updateAttendanceDetail(+id, request, response);
+		return this.eventsService.updateAttendanceDetail(
+			+id,
+			request,
+			response,
+		);
 	}
-	
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
