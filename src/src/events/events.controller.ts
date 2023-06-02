@@ -48,6 +48,7 @@ export class EventsController {
 	}
 
 	@Get(':id')
+	@UseGuards(new AuthGuard())
 	findOne(@Param('id') id: string, @Res() response: Response) {
 		return this.eventsService.findOne(+id, response);
 	}
@@ -64,6 +65,7 @@ export class EventsController {
 	}
 
 	@Patch('/attendance/:id')
+	@UseGuards(new AuthGuard())
 	updateAttendanceDetail(
 		@Param('id') id: string,
 		@Body() request: Record<string, any>,
