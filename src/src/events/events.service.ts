@@ -160,6 +160,14 @@ export class EventsService {
             status
             updated_by
             user_id
+            users{
+              first_name
+              id
+              last_name
+              middle_name
+              profile_url
+              aadhar_verified   
+            }
           }
         }
       }`,
@@ -215,6 +223,14 @@ export class EventsService {
           status
           long
           rsvp
+          users{
+            first_name
+            id
+            last_name
+            middle_name
+            profile_url
+            aadhar_verified   
+          }
         }
        
       }
