@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import jwt_decode from 'jwt-decode';
-import { AadhaarKycService } from 'src/aadhaar_kyc/aadhaar_kyc.service';
+import { AadhaarKycService } from 'src/modules/aadhaar_kyc/aadhaar_kyc.service';
 import { HasuraService } from 'src/services/hasura/hasura.service';
 import { KeycloakService } from 'src/services/keycloak/keycloak.service';
 import { UserHelperService } from 'src/helper/userHelper.service';
@@ -412,7 +412,6 @@ export class AuthService {
 
 		// Generate random password
 		const password = `@${this.userHelperService.generateRandomPassword()}`;
-		// const password = body?.mobile;
 
 		// Generate username
 		let username = `${body.first_name}`;
@@ -581,8 +580,6 @@ export class AuthService {
 						6,
 					)}`,
 					data: {
-						// @TODO - remove OTP later
-						// otp: otp,
 						hash: fullhash,
 					},
 				};
