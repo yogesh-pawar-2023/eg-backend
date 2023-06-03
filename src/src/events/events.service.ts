@@ -162,7 +162,7 @@ export class EventsService {
             status
             updated_by
             user_id
-            users{
+            user{
               first_name
               id
               last_name
@@ -225,7 +225,7 @@ export class EventsService {
           status
           long
           rsvp
-          users{
+          user{
             first_name
             id
             last_name
