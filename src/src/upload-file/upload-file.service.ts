@@ -22,12 +22,8 @@ export class UploadFileService {
 			.toLowerCase();
 		const [name, fileType] = originalName.split('.');
 		let key = `${name}${Date.now()}.${fileType}`;
-		console.log('key', key);
 		const fileUrl = await this.s3Service.uploadFile(file, key);
-
-		console.log('fileUrl', fileUrl);
 		if (fileUrl) {
-			console.log('name 27', name);
 			let query = {
 				query: `mutation MyMutation {
                     insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_type}", created_by: "${id}"}) {
@@ -50,7 +46,6 @@ export class UploadFileService {
 			};
 			const res = await this.hasuraService.postData(query);
 
-			console.log('hasuraService', res);
 			if (res) {
 				return response.status(200).send({
 					success: true,

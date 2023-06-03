@@ -29,8 +29,6 @@ export class UploadFileController {
 		@Res() request: Request,
 		@Res() response: Response,
 	) {
-		console.log('upload-file yog', file);
-		console.log('document_type', document_type);
 		await this.uploadFileService.addFile(file, id, document_type, response);
 	}
 
