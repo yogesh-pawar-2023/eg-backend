@@ -84,7 +84,7 @@ export class UploadFileService {
 				success: true,
 				status: 'Success',
 				message: 'File uploaded successfully!',
-				data: { fileUrl },
+				data: { key: key, fileUrl: fileUrl },
 			});
 		} else {
 			return response.status(500).send({
@@ -98,7 +98,6 @@ export class UploadFileService {
 
 	async getFile(id: string, response: Response) {
 		const key = id;
-
 		const fileUrl = await this.s3Service.getFileUrl(key);
 
 		console.log('fileUrl', fileUrl);
