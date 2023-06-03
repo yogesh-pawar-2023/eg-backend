@@ -1,17 +1,17 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Req,
-    Res,
-    UseGuards,
-    UseInterceptors,
-    UsePipes,
-    ValidationPipe
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Req,
+	Res,
+	UseGuards,
+	UseInterceptors,
+	UsePipes,
+	ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SentryInterceptor } from 'src/common/interceptors/sentry.interceptor';
@@ -67,11 +67,26 @@ export class EventsController {
 		return this.eventsService.update(+id, header, request, response);
 	}
 
+	@Patch('/accept/:id')
+	@UseGuards(new AuthGuard())
+	updateEventAcceptDetail(
+		@Param('id') id: string,
+		@Body() request: Record<string, any>,
+		@Res() response: Response,
+	) {
+		let {rsvp}=request
+		return this.eventsService.updateEventAcceptDetail(
+			+id,
+			rsvp,
+			response,
+		);
+	}
+
 	@Patch('/attendance/:id')
 	@UseGuards(new AuthGuard())
 	updateAttendanceDetail(
 		@Param('id') id: string,
-		@Body() request: Record<string, any>,
+		@Body() request: string,
 		@Res() response: Response,
 	) {
 		return this.eventsService.updateAttendanceDetail(
