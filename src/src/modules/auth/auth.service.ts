@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import jwt_decode from 'jwt-decode';
+import { UserHelperService } from 'src/helper/userHelper.service';
 import { AadhaarKycService } from 'src/modules/aadhaar_kyc/aadhaar_kyc.service';
 import { HasuraService } from 'src/services/hasura/hasura.service';
 import { KeycloakService } from 'src/services/keycloak/keycloak.service';
-import { UserHelperService } from 'src/helper/userHelper.service';
 
 const crypto = require('crypto');
 const axios = require('axios');
@@ -23,8 +23,14 @@ export class AuthService {
 		private readonly keycloakService: KeycloakService,
 		private readonly hasuraService: HasuraService,
 		private readonly userHelperService: UserHelperService,
-	) { }
+	) {}
 
+	public returnFields = [
+		'aadhar_token',
+		'aadhar_verified',
+		'aadhar_no',
+		'aadhaar_verification_mode'
+	];
 	public async sendOtp(req, response) {
 		const mobile = req.mobile;
 		const reason = req.reason;
@@ -74,6 +80,29 @@ export class AuthService {
 		}
 	}
 
+	public async verifyAadharKyc(req: any, response: any) {
+		const tableName = 'users';
+		const result = await this.hasuraService.update(
+			req.id,
+			tableName,
+			req,
+			this.returnFields,
+			[...this.returnFields, 'id'],
+		);
+		if (result.users) {
+			return response.status(200).send({
+				success: true,
+				message: 'User Updated successfully!',
+				data: { user: result.users },
+			});
+		} else {
+			return response.status(500).send({
+				success: false,
+				message: 'Unable to Update User!',
+				data: {},
+			});
+		}
+	}
 	public async resetPasswordUsingOtp(req, response) {
 		console.log('req', req);
 		const username = req.username;
