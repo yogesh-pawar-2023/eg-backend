@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
 import { HasuraService } from 'src/services/hasura/hasura.service';
 import { S3Service } from 'src/services/s3/s3.service';
+import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 
 @Injectable()
 export class UploadFileService {
 	constructor(
+		private hasuraServiceFromServices: HasuraServiceFromServices,
+
 		private readonly s3Service: S3Service,
 		private readonly hasuraService: HasuraService,
 	) {}
@@ -22,7 +25,60 @@ export class UploadFileService {
 			.toLowerCase();
 		const [name, fileType] = originalName.split('.');
 		let key = `${name}${Date.now()}.${fileType}`;
+
 		const fileUrl = await this.s3Service.uploadFile(file, key);
+		const documentTypeArray = ['aadhaar_front', 'aadhaar_back'];
+		if (documentTypeArray.includes(document_type)) {
+			try {
+				const data = {
+					query: `query MyQuery {
+                          users(where: {id: {_eq: ${id}}}) {
+                            id
+                            username
+                            mobile
+                            ${document_type}: documents(where: {document_sub_type: {_eq: "${document_type}"}}) {
+                              id
+                              name
+                              doument_type
+                              document_sub_type
+                              path
+                            }
+                          }
+                         
+                        }`,
+				};
+				//fetch documents data based on id and docuent_type
+				const response = await this.hasuraServiceFromServices.getData(
+					data,
+				);
+				let result = response?.data?.users;
+				let FileData: any = result[0][document_type];
+				if (FileData.length > 0) {
+					const promise = [];
+					const promise2 = [];
+					for (let item of FileData) {
+						//add all exist records into promise
+						promise.push(
+							this.hasuraService.delete('documents', {
+								id: item.id,
+							}),
+						);
+						promise2.push(this.s3Service.deletePhoto(item.name));
+					}
+					//delete all existing records from table
+					const deleteDocuments = await Promise.all(promise);
+					//delete all existing records from s3 bucket
+					const deleteFroms3Bucket = await Promise.all(promise2);
+				}
+			} catch (error) {
+				return response.status(500).send({
+					success: false,
+
+					message: 'Unable to Upload documents',
+					data: {},
+				});
+			}
+		}
 		if (fileUrl) {
 			let query = {
 				query: `mutation MyMutation {
