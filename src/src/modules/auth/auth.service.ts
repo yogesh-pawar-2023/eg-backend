@@ -23,7 +23,7 @@ export class AuthService {
 		private readonly keycloakService: KeycloakService,
 		private readonly hasuraService: HasuraService,
 		private readonly userHelperService: UserHelperService,
-	) {}
+	) { }
 
 	public async sendOtp(req, response) {
 		const mobile = req.mobile;
@@ -763,7 +763,8 @@ export class AuthService {
                 form_step_number
                 created_by
                 updated_by
-				academic_year_id
+                academic_year_id
+                program_id
               }
               qualifications {
                 created_by
