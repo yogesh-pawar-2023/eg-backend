@@ -16,6 +16,7 @@ import {
 import { Request, Response } from 'express';
 import { SentryInterceptor } from 'src/common/interceptors/sentry.interceptor';
 import { AuthGuard } from 'src/modules/auth/auth.guard';
+import { AcceptEventDto } from './dto/accept-event.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EventsService } from './events.service';
 
@@ -69,15 +70,15 @@ export class EventsController {
 
 	@Patch('/accept/:id')
 	@UseGuards(new AuthGuard())
+	@UsePipes(ValidationPipe)
 	updateEventAcceptDetail(
 		@Param('id') id: string,
-		@Body() request: Record<string, any>,
+		@Body() request: AcceptEventDto,
 		@Res() response: Response,
 	) {
-		let {rsvp}=request
 		return this.eventsService.updateEventAcceptDetail(
 			+id,
-			rsvp,
+			{rsvp:request.rsvp},
 			response,
 		);
 	}
