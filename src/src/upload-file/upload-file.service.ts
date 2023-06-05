@@ -25,7 +25,7 @@ export class UploadFileService {
 		const [name, fileType] = originalName.split('.');
 		let key = `${name}${Date.now()}.${fileType}`;
 		const fileUrl = await this.s3Service.uploadFile(file, key);
-		const documentTypeArray = ['aadhaar_front', 'aadhaar_back'];
+		const documentTypeArray = ['aadhaar_front', 'aadhaar_back',"profile_photo_1","profile_photo_2","profile_photo_3"];
 		if (documentTypeArray.includes(document_type)) {
 			try {
 				const data = {
