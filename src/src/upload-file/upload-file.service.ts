@@ -12,7 +12,6 @@ export class UploadFileService {
 		private readonly s3Service: S3Service,
 		private readonly hasuraService: HasuraService,
 	) {}
-
 	async addFile(
 		file: Express.Multer.File,
 		id: number,
@@ -25,27 +24,25 @@ export class UploadFileService {
 			.toLowerCase();
 		const [name, fileType] = originalName.split('.');
 		let key = `${name}${Date.now()}.${fileType}`;
-
 		const fileUrl = await this.s3Service.uploadFile(file, key);
 		const documentTypeArray = ['aadhaar_front', 'aadhaar_back'];
 		if (documentTypeArray.includes(document_type)) {
 			try {
 				const data = {
 					query: `query MyQuery {
-                          users(where: {id: {_eq: ${id}}}) {
-                            id
-                            username
-                            mobile
-                            ${document_type}: documents(where: {document_sub_type: {_eq: "${document_type}"}}) {
-                              id
-                              name
-                              doument_type
-                              document_sub_type
-                              path
-                            }
-                          }
-                         
-                        }`,
+                    users(where: {id: {_eq: ${id}}}) {
+                      id
+                      username
+                      mobile
+                      ${document_type}: documents(where: {document_sub_type: {_eq: "${document_type}"}}) {
+                        id
+                        name
+                        doument_type
+                        document_sub_type
+                        path
+                      }
+                    }
+                  }`,
 				};
 				//fetch documents data based on id and docuent_type
 				const response = await this.hasuraServiceFromServices.getData(
@@ -82,23 +79,23 @@ export class UploadFileService {
 		if (fileUrl) {
 			let query = {
 				query: `mutation MyMutation {
-                    insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_type}", created_by: "${id}"}) {
-                      affected_rows
-                      returning {
-                        id
-                        doument_type
-                        document_sub_type
-                        path
-                        name
-                        user_id
-                        updated_by
-                        provider
-                        created_by
-                        context_id
-                        context
-                      }
+                  insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_type}", created_by: "${id}"}) {
+                    affected_rows
+                    returning {
+                      id
+                      doument_type
+                      document_sub_type
+                      path
+                      name
+                      user_id
+                      updated_by
+                      provider
+                      created_by
+                      context_id
+                      context
                     }
-                  }`,
+                  }
+                }`,
 			};
 			const res = await this.hasuraService.postData(query);
 
