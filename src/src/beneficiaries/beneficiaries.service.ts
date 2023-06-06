@@ -267,6 +267,8 @@ export class BeneficiariesService {
 						...e,
 						['program_faciltators']:
 							e?.['program_faciltators']?.[0],
+							['program_beneficiaries']:
+							e?.['program_beneficiaries']?.[0],
 					})),
 					limit,
 					currentPage: page,
@@ -394,7 +396,7 @@ export class BeneficiariesService {
 
 		const response = await this.hasuraServiceFromServices.getData(data);
 		let result = response?.data?.users_by_pk;
-		result.program_beneficiaries = result.program_beneficiaries;
+		result.program_beneficiaries = result.program_beneficiaries?.[0];
 		if (!result) {
 			return resp.status(404).send({
 				success: false,
