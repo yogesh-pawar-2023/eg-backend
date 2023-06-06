@@ -7,5 +7,5 @@ export class AadharVerified {
 
 	@IsString()
 	@IsNotEmpty()
-	public aadhar_no: string;
+	public aadhaar_verification_mode: string;
 }
