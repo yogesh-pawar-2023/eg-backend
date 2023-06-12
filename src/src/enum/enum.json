@@ -9,7 +9,15 @@
     { "title": "MASTERS", "value": "masters" },
     { "title": "DIPLOMA", "value": "diploma" },
     { "title": "POST_GRADUATE", "value": "post_graduate" },
-    { "title": "PH_D", "value": "ph_d" }
+    { "title": "PH_D", "value": "ph_d" },
+    { "title": "PERSUING_GRADUATION", "value": "pursuing_graduation" }
+  ],
+  "TEACHING_QUALIFICATION":[
+    { "title": "D_ED", "value": "d_ed" },
+    { "title": "B_ED", "value": "b_ed" },
+    { "title": "M_ED", "value": "m_ed" },
+    { "title": "STC", "value": "stc" },
+    { "title": "NONE", "value": "none" }
   ],
   "TEACHING_DEGREE": [
     { "title": "NO", "value": "no" },
