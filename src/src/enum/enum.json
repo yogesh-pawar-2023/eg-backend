@@ -42,7 +42,7 @@
     { "title": "FACILITATOR_STATUS_APPLIED", "value": "applied" },
     { "title": "FACILITATOR_STATUS_APPLICATION_SCREENED", "value": "application_screened" },
     { "title": "FACILITATOR_STATUS_SHORTLISTED_FOR_ORIENTATION", "value": "shortlisted_for_orientation" },
-    { "title": "FACILITATOR_STATUS_POTENTIAL_PRERAK", "value": "potential_prerak" },
+    { "title": "FACILITATOR_STATUS_PRAGATI_MOBILIZER", "value": "pragati_mobilizer" },
     { "title": "FACILITATOR_STATUS_SELECTED_FOR_TRAINING", "value": "selected_for_training" },
     { "title": "FACILITATOR_STATUS_SELECTED_FOR_ONBOARDING", "value": "selected_for_onboarding" },
     { "title": "FACILITATOR_STATUS_SELECTED_PRERAK", "value": "selected_prerak" },
@@ -82,7 +82,8 @@
     { "title": "6", "value": "6" },
     { "title": "7", "value": "7" },
     { "title": "8", "value": "8" },
-    { "title": "9", "value": "9" }
+    { "title": "9", "value": "9" },
+    { "title": "10", "value": "10" }
   ],
   "ENROLLEMENT_STATUS": [
     { "title": "ENROLLED", "value": "enrolled" },
@@ -125,9 +126,9 @@
     { "title": "SCHOOL_BEING_TOO_FAR_AWAY", "value": "school_being_too_far_away" },
     { "title": "DUE_TO_FAIL", "value": "fail" },
     { "title": "GIRL_NOT_WILLING_TO_PURSUE_FURTHER_STUDIES", "value": "girl_not_willing_to_pursue_further_studies" },
-    { "title": "SOCIAL / FAMILY PRESSURE", "value": "social_family_pressure" },
+    { "title": "SOCIAL_FAMILY PRESSURE", "value": "social_family_pressure" },
     { "title": "ECONOMIC_DIFFICULTIES", "value": "economic_difficulties" },
-    { "title": "FRIENDS / FRIENDS LEAVING SCHOOL", "value": "friends_friends_leaving_school" },
+    { "title": "FRIENDS_FRIENDS LEAVING SCHOOL", "value": "friends_friends_leaving_school" },
     { "title": "DUE_TO_MARRIAGES", "value": "marriages" },
     { "title": "MIGRATION_RELATED_TO_EMPLOYMENT", "value": "migration_related_to_employment" }
   ],
@@ -186,5 +187,26 @@
     {"title":"SUPPORT_TO_STUDY_ONLINE","value":"support_to_study_online"},
     {"title":"SUPPORT_IN_PROBLEM_SOLVING","value":"support_in_problem_solving"},
     {"title":"OTHER","value":"other"}
+  ],
+  "REMINDERS": [
+    {"title":"1_HOUR_BEFORE","value":"hour_1_before"},
+    {"title":"1_DAY_BEFORE","value":"day_1_before"},
+    {"title":"1_WEEK_BEFORE","value":"week_1_before"}
+  ],
+  "DROPOUT_REASONS": [
+    { "title": "FAMILY_ISSUE", "value": "family_issue" },
+    { "title": "COMMUNITY_ISSUE", "value": "community_issue" },
+    { "title": "GETTING_MARRIED", "value": "getting_married" },
+    { "title": "PERSONAL_REASONS", "value": "personal_reasons" },
+    { "title": "MOVING_AWAY", "value": "moving_away" },
+    { "title": "OTHER", "value": "other" }
+  ],
+  "REACTIVATE_REASONS": [
+    { "title": "CAREER_ASPIRATIONS", "value": "career_aspirations" },
+    { "title": "CONVINCED_BY_PRERAK", "value": "convinced_by_Prerak" },
+    { "title": "MOVING_BACK", "value": "moved_back" },
+    { "title": "ISSUE_RESOLVED", "value": "issue_resolved" },
+    { "title": "CHANGED_MIND", "value": "changed_mind" },
+    { "title": "OTHER", "value": "other" }
   ]
 }
