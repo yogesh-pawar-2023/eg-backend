@@ -134,9 +134,9 @@
     { "title": "SCHOOL_BEING_TOO_FAR_AWAY", "value": "school_being_too_far_away" },
     { "title": "DUE_TO_FAIL", "value": "fail" },
     { "title": "GIRL_NOT_WILLING_TO_PURSUE_FURTHER_STUDIES", "value": "girl_not_willing_to_pursue_further_studies" },
-    { "title": "SOCIAL_FAMILY PRESSURE", "value": "social_family_pressure" },
+    { "title": "SOCIAL_FAMILY_PRESSURE", "value": "social_family_pressure" },
     { "title": "ECONOMIC_DIFFICULTIES", "value": "economic_difficulties" },
-    { "title": "FRIENDS_FRIENDS LEAVING SCHOOL", "value": "friends_friends_leaving_school" },
+    { "title": "FRIENDS_FRIENDS_LEAVING_SCHOOL", "value": "friends_friends_leaving_school" },
     { "title": "DUE_TO_MARRIAGES", "value": "marriages" },
     { "title": "MIGRATION_RELATED_TO_EMPLOYMENT", "value": "migration_related_to_employment" }
   ],
