@@ -56,14 +56,18 @@ export class FacilitatorService {
 		// return this.hasuraService.getOne(+id, this.table, this.returnFields);
 	}
 
-	async getFacilitatorsForOrientation(request: any, body: any, response: any) {
+	async getFacilitatorsForOrientation(
+		request: any,
+		body: any,
+		response: any,
+	) {
 		const user = await this.userService.ipUserInfo(request);
-		
+
 		const page = isNaN(body.page) ? 1 : parseInt(body.page);
 		const limit = isNaN(body.limit) ? 15 : parseInt(body.limit);
 
 		let skip = page > 1 ? limit * (page - 1) : 0;
-		
+
 		const data = {
 			query: `
 				query MyQuery($limit:Int, $offset:Int) {
@@ -261,7 +265,8 @@ export class FacilitatorService {
 			return obj;
 		});
 
-		const count = hasuraResponse?.data?.users_aggregate?.aggregate?.count || 0;
+		const count =
+			hasuraResponse?.data?.users_aggregate?.aggregate?.count || 0;
 
 		const totalPages = Math.ceil(count / limit);
 
@@ -691,11 +696,7 @@ export class FacilitatorService {
 				break;
 			}
 			case 'reference_details': {
-				await this.updateReferenceDetails(
-					id,
-					body,
-					facilitatorUser,
-				);
+				await this.updateReferenceDetails(id, body, facilitatorUser);
 				break;
 			}
 			case 'documents_checklist': {
@@ -735,25 +736,51 @@ export class FacilitatorService {
 
 	async removeExperience(id: number, body: any, response: any) {
 		try {
-			const deletedExperienceData = (await this.hasuraService.delete('experience', { id }))?.experience;
+			const deletedExperienceData = (
+				await this.hasuraService.delete('experience', { id })
+			)?.experience;
 
 			if (deletedExperienceData.affected_rows == 0) {
 				return response.status(400).json({
 					success: false,
-					message: "Experience Id does not exists!"
+					message: 'Experience Id does not exists!',
 				});
 			}
 
-			const deletedReferenceData = (await this.hasuraService.delete('references', { context: 'experience', context_id: id }, [], ['id']))?.references;
-			
-			if (deletedReferenceData && deletedReferenceData.affected_rows > 0) {
+			const deletedReferenceData = (
+				await this.hasuraService.delete(
+					'references',
+					{ context: 'experience', context_id: id },
+					[],
+					['id'],
+				)
+			)?.references;
+
+			if (
+				deletedReferenceData &&
+				deletedReferenceData.affected_rows > 0
+			) {
 				const referenceId = deletedReferenceData.returning[0].id;
-				
-				const deletedDocumentData = (await this.hasuraService.delete('documents', { context: 'references', context_id: referenceId }, [], ['id', 'name']))?.documents;
-				
-				if (deletedDocumentData && deletedDocumentData.affected_rows > 0) {
+
+				const deletedDocumentData = (
+					await this.hasuraService.delete(
+						'documents',
+						{ context: 'references', context_id: referenceId },
+						[],
+						['id', 'name'],
+					)
+				)?.documents;
+
+				if (
+					deletedDocumentData &&
+					deletedDocumentData.affected_rows > 0
+				) {
 					const fileName = deletedDocumentData.returning[0].name;
-					if (fileName && typeof fileName === 'string' && fileName.trim()) {
+					if (
+						fileName &&
+						typeof fileName === 'string' &&
+						fileName.trim()
+					) {
 						await this.s3Service.deletePhoto(fileName);
 					}
 				}
@@ -761,13 +788,12 @@ export class FacilitatorService {
 
 			return response.status(200).json({
 				success: true,
-				message: "Experience deleted successfully!"
+				message: 'Experience deleted successfully!',
 			});
-		
 		} catch (error) {
 			return response.status(500).json({
 				success: false,
-				message: error.message
+				message: error.message,
 			});
 		}
 	}
@@ -835,7 +861,13 @@ export class FacilitatorService {
 			);
 			variables.qualificationIds = body.qualificationIds;
 		}
-
+		if (body.search && body.search !== '') {
+			filterQueryArray.push(`{_or: [
+        { first_name: { _ilike: "%${body.search}%" } },
+        { last_name: { _ilike: "%${body.search}%" } },
+        { email_id: { _ilike: "%${body.search}%" } }
+      ]} `);
+		}
 		if (
 			body.hasOwnProperty('status') &&
 			this.isValidString(body.status) &&
@@ -848,10 +880,7 @@ export class FacilitatorService {
 			variables.status = body.status;
 		}
 
-		if (
-			body.hasOwnProperty('district') &&
-			body.district.length
-		) {
+		if (body.hasOwnProperty('district') && body.district.length) {
 			paramsQueryArray.push('$district: [String!]');
 			filterQueryArray.push('{district: { _in: $district }}');
 			variables.district = body.district;
@@ -866,7 +895,6 @@ export class FacilitatorService {
 		if (paramsQueryArray.length) {
 			paramsQuery = '(' + paramsQueryArray.join(',') + ')';
 		}
-
 		let sortQuery = `{ created_at: desc }`;
 
 		if (body.hasOwnProperty('sort')) {
@@ -1127,7 +1155,6 @@ export class FacilitatorService {
 	}
 
 	async userById(id: any) {
-
 		const userData = (await this.userService.userById(+id)).data;
 
 		return {
