@@ -213,6 +213,19 @@ export class BeneficiariesService {
                         facilitator_id
                         created_by
                         beneficiaries_found_at
+						document {
+							context
+							context_id
+							created_by
+							document_sub_type
+							doument_type
+							id
+							name
+							path
+							provider
+							updated_by
+							user_id
+						  }
                           }
                           core_beneficiaries {
                         career_aspiration
@@ -364,6 +377,19 @@ export class BeneficiariesService {
                 facilitator_id
                 created_by
                 beneficiaries_found_at
+				document {
+					context
+					context_id
+					created_by
+					document_sub_type
+					doument_type
+					id
+					name
+					path
+					provider
+					updated_by
+					user_id
+				  }
               }
               core_beneficiaries {
                 career_aspiration
@@ -1137,6 +1163,19 @@ export class BeneficiariesService {
             documents_status
             learning_motivation
             type_of_support_needed
+			document {
+				context
+				context_id
+				created_by
+				document_sub_type
+				doument_type
+				id
+				name
+				path
+				provider
+				updated_by
+				user_id
+			  }
           }
             core_beneficiaries {
             career_aspiration

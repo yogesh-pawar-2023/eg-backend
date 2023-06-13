@@ -19,6 +19,14 @@ export class UploadFileService {
     document_sub_type:string,
 		response: Response,
 	) {
+    if(!file){
+      return response.status(400).send({
+        success: false,
+        status:"Not Found",
+        message: 'Document Not Passed',
+        data: {},
+      });
+    }
 		const originalName = file.originalname
 			.split(' ')
 			.join('')
@@ -80,7 +88,7 @@ export class UploadFileService {
 		if (fileUrl) {
 			let query = {
 				query: `mutation MyMutation {
-                  insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_sub_type}", created_by: "${id}"}) {
+                  insert_documents(objects: {name: "${key}", path: "/user/docs", provider: "s3", updated_by: "${id}", user_id: "${id}", doument_type: "${document_type}", document_sub_type: "${document_sub_type??document_type}", created_by: "${id}"}) {
                     affected_rows
                     returning {
                       id
