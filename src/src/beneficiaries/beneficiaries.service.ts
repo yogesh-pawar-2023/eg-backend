@@ -634,9 +634,7 @@ export class BeneficiariesService {
 					'previous_school_type',
 					'reason_of_leaving_education',
 				],
-				program_beneficiaries: [
-					'learning_level',
-				],
+				program_beneficiaries: ['learning_level'],
 			},
 			edit_education: {
 				core_beneficiaries: [
@@ -647,9 +645,7 @@ export class BeneficiariesService {
 					'previous_school_type',
 					'reason_of_leaving_education',
 				],
-				program_beneficiaries: [
-					'learning_level',
-				],
+				program_beneficiaries: ['learning_level'],
 			},
 			add_other_details: {
 				program_beneficiaries: [
@@ -733,7 +729,7 @@ export class BeneficiariesService {
 
 				if (
 					hasuraResponse?.data?.users_aggregate?.aggregate.count >
-					0 &&
+						0 &&
 					req.is_duplicate !== 'yes'
 				) {
 					return response.status(400).json({
@@ -744,7 +740,7 @@ export class BeneficiariesService {
 
 				if (
 					hasuraResponse?.data?.users_aggregate?.aggregate.count <=
-				    0 &&
+						0 &&
 					req.is_duplicate === 'yes'
 				) {
 					return response.status(400).json({
@@ -945,7 +941,7 @@ export class BeneficiariesService {
 				// Update educational data in program_beneficiaries table
 				userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.add_education
-					.program_beneficiaries;
+						.program_beneficiaries;
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				tableName = 'program_beneficiaries';
 
@@ -1004,7 +1000,7 @@ export class BeneficiariesService {
 				// Update other details in program_beneficiaries table
 				let userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.add_other_details
-					.program_beneficiaries;
+						.program_beneficiaries;
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 
@@ -1024,7 +1020,7 @@ export class BeneficiariesService {
 				// Update other details in program_beneficiaries table
 				let userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.add_other_details
-					.program_beneficiaries;
+						.program_beneficiaries;
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 
