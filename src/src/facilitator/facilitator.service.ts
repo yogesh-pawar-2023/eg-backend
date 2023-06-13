@@ -786,7 +786,13 @@ export class FacilitatorService {
 			);
 			variables.qualificationIds = body.qualificationIds;
 		}
-
+    if (body.search && body.search !== '') {
+			filterQueryArray.push(`{_or: [
+        { first_name: { _ilike: "%${body.search}%" } },
+        { last_name: { _ilike: "%${body.search}%" } },
+        { email_id: { _ilike: "%${body.search}%" } }
+      ]} `)
+		}
 		if (
 			body.hasOwnProperty('status') &&
 			this.isValidString(body.status) &&
@@ -811,15 +817,14 @@ export class FacilitatorService {
 		filterQueryArray.unshift(
 			`{program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "${user?.data?.program_users[0]?.organisation_id}"}}}`,
 		);
-
+  
 		let filterQuery = '{ _and: [' + filterQueryArray.join(',') + '] }';
 		let paramsQuery = '';
 		if (paramsQueryArray.length) {
 			paramsQuery = '(' + paramsQueryArray.join(',') + ')';
 		}
-
 		let sortQuery = `{ created_at: desc }`;
-
+    
 		if (body.hasOwnProperty('sort')) {
 			// Supported sortings: name, qualification, region, eligibility, status, comments
 			let sortField = body.sort.split('|')[0]?.trim();
