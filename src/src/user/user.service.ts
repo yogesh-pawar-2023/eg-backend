@@ -538,19 +538,6 @@ export class UserService {
 			document_sub_type
 			path
 		  }
-		  documents{
-			context
-			context_id
-			created_by
-			document_sub_type
-			doument_type
-			id
-			name
-			path
-			provider
-			updated_by
-			user_id
-		  }
 		  program_users {
 			id
 			organisation_id
