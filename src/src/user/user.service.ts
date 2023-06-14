@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
+	BadRequestException,
+	HttpException,
+	HttpStatus,
+	Injectable,
 } from '@nestjs/common';
 import { Response } from 'express';
 import jwt_decode from 'jwt-decode';
@@ -36,10 +36,10 @@ export class UserService {
 
 			var data = {
 				query: `mutation update($id:Int) {
-            update_${tableName}(where: {id: {_eq: $id}}, _set: {${query}}) {
-                affected_rows
-            }
-        }`,
+			update_${tableName}(where: {id: {_eq: $id}}, _set: {${query}}) {
+				affected_rows
+			}
+		}`,
 				variables: {
 					id: userId,
 				},
@@ -133,12 +133,12 @@ export class UserService {
 		// Set query for getting data info
 		var queryData = {
 			query: `
-        query GetUserDetails($keycloak_id:uuid) {
-          users(where: {keycloak_id: {_eq: $keycloak_id}}) {
-            id
-          }
-        }
-      `,
+		query GetUserDetails($keycloak_id:uuid) {
+		  users(where: {keycloak_id: {_eq: $keycloak_id}}) {
+			id
+		  }
+		}
+	  `,
 			variables: { keycloak_id: keycloak_id },
 		};
 		// Initialize config
@@ -426,16 +426,16 @@ export class UserService {
 	async organizationInfo(id: any) {
 		const data = {
 			query: `query MyQuery {
-        organisations_by_pk(id:"${id}") {
-          address
-          contact_person
-          gst_no
-          mobile
-          id
-          name
-        }
-      }
-      `,
+		organisations_by_pk(id:"${id}") {
+		  address
+		  contact_person
+		  gst_no
+		  mobile
+		  id
+		  name
+		}
+	  }
+	  `,
 		};
 
 		const response = await lastValueFrom(
@@ -462,257 +462,261 @@ export class UserService {
 	async userById(id: any, resp?: any) {
 		var data = {
 			query: `query searchById {
-        users_by_pk(id:${id}) {
-          aadhaar_verification_mode
-          aadhar_no
-          aadhar_token
-          aadhar_verified
-          address
-          address_line_1
-          address_line_2
-          alternative_mobile_number
-          block
-          block_id
-          block_village_id
-          created_at
-          created_by
-          district
-          district_id
-          dob
-          duplicate_reason
-          email_id
-          email_verified
-          first_name
-          gender
-          grampanchayat
-          id
-          is_duplicate
-          keycloak_id
-          last_name
-          lat
-          long
-          middle_name
-          mobile
-          mobile_no_verified
-          password
-          pincode
-          profile_url
-          state
-          state_id
-          updated_at
-          updated_by
-          village
-          username
-          aadhaar_front: documents(where: {document_sub_type: {_eq: "aadhaar_front"}}) {
-            id
-            name
-            doument_type
-            document_sub_type
-            path
-          }
-          aadhaar_back: documents(where: {document_sub_type: {_eq: "aadhaar_back"}}) {
-            id
-            name
-            doument_type
-            document_sub_type
-            path
-          }
-          profile_photo_1: documents(where: {document_sub_type: {_eq: "profile_photo_1"}}) {
-            id
-            name
-            doument_type
-            document_sub_type
-            path
-          }
-          profile_photo_2: documents(where: {document_sub_type: {_eq: "profile_photo_2"}}) {
-            id
-            name
-            doument_type
-            document_sub_type
-            path
-          }
-          profile_photo_3: documents(where: {document_sub_type: {_eq: "profile_photo_3"}}) {
-            id
-            name
-            doument_type
-            document_sub_type
-            path
-          }
-          documents{
-            context
-            context_id
-            created_by
-            document_sub_type
-            doument_type
-            id
-            name
-            path
-            provider
-            updated_by
-            user_id
-          }
-          program_users {
-            id
-            organisation_id
-            academic_year_id
-            program_id
-            role_id
-            status
-            user_id
-          }
-          extended_users{
-            id
-            user_id
-            marital_status
-            qualification_id
-            designation
-            social_category
-            created_by
-            updated_by
-          }
-          core_faciltator {
-            created_by
-            device_ownership
-            device_type
-            id
-            pan_no
-            refreere
-            sourcing_channel
-            updated_by
-            user_id
-          }
-          experience {
-            id
-            description
-            end_year
-            experience_in_years
-            institution
-            start_year
-            organization
-            role_title
-            user_id
-            type
-            related_to_teaching
-            reference {
-              id
-              name
-              context
-              context_id
-              contact_number
-              document_id
-              type_of_document
-              designation
-              document_reference {
-                id
-                user_id
-                name
-                doument_type
-                document_sub_type
-                provider
-                path
-              }
-            }
-          }
-          program_faciltators {
-            parent_ip
-            documents_status
-            availability
-            has_social_work_exp
-            id
-            police_verification_done
-            program_id
-            social_background_verified_by_neighbours
-            user_id
-            village_knowledge_test
-            status
-            form_step_number
-            created_by
-            updated_by
-            academic_year_id
-            qualification_ids
-          }
-          qualifications {
-            created_by
-            end_year
-            id
-            institution
-            qualification_master_id
-            start_year
-            updated_by
-            user_id
-            qualification_reference_document_id
-            qualification_master {
-              context
-              context_id
-              created_by
-              id
-              name
-              type
-              updated_by
-            }
-            document_reference {
-              id
-              user_id
-              name
-              context
-              context_id
-              doument_type
-              document_sub_type
-              provider
-              path
-            }
-          }
-          interviews {
-            id
-            owner_user_id
-            end_date_time
-            comment
-            created_at
-            created_by
-            start_date_time
-            status
-            title
-            updated_at
-            updated_by
-            user_id
-            location_type
-            location
-            owner {
-              first_name
-              last_name
-              id
-            }
-          }
-          events {
-            context
-            context_id
-            created_by
-            end_date
-            end_time
-            id
-            location
-            location_type
-            start_date
-            start_time
-            updated_by
-            user_id
-          }
-          documents(order_by: {id: desc}){
-            id
-            user_id
-            name
-            doument_type
-            document_sub_type
-            context
-            context_id
-          }
-          references {
-            id
-            name
-            contact_number
-            designation
-          }
-        }}`,
+		users_by_pk(id:${id}) {
+		  aadhaar_verification_mode
+		  aadhar_no
+		  aadhar_token
+		  aadhar_verified
+		  address
+		  address_line_1
+		  address_line_2
+		  alternative_mobile_number
+		  block
+		  block_id
+		  block_village_id
+		  created_at
+		  created_by
+		  district
+		  district_id
+		  dob
+		  duplicate_reason
+		  email_id
+		  email_verified
+		  first_name
+		  gender
+		  grampanchayat
+		  id
+		  is_duplicate
+		  keycloak_id
+		  last_name
+		  lat
+		  long
+		  middle_name
+		  mobile
+		  mobile_no_verified
+		  password
+		  pincode
+		  profile_url
+		  state
+		  state_id
+		  updated_at
+		  updated_by
+		  village
+		  username
+		  aadhaar_front: documents(where: {document_sub_type: {_eq: "aadhaar_front"}}) {
+			id
+			name
+			doument_type
+			document_sub_type
+			path
+		  }
+		  aadhaar_back: documents(where: {document_sub_type: {_eq: "aadhaar_back"}}) {
+			id
+			name
+			doument_type
+			document_sub_type
+			path
+		  }
+		  profile_photo_1: documents(where: {document_sub_type: {_eq: "profile_photo_1"}}) {
+			id
+			name
+			doument_type
+			document_sub_type
+			path
+		  }
+		  profile_photo_2: documents(where: {document_sub_type: {_eq: "profile_photo_2"}}) {
+			id
+			name
+			doument_type
+			document_sub_type
+			path
+		  }
+		  profile_photo_3: documents(where: {document_sub_type: {_eq: "profile_photo_3"}}) {
+			id
+			name
+			doument_type
+			document_sub_type
+			path
+		  }
+		  documents{
+			context
+			context_id
+			created_by
+			document_sub_type
+			doument_type
+			id
+			name
+			path
+			provider
+			updated_by
+			user_id
+		  }
+		  program_users {
+			id
+			organisation_id
+			academic_year_id
+			program_id
+			role_id
+			status
+			user_id
+		  }
+		  extended_users{
+			id
+			user_id
+			marital_status
+			qualification_id
+			designation
+			social_category
+			created_by
+			updated_by
+		  }
+		  core_faciltator {
+			created_by
+			device_ownership
+			device_type
+			id
+			pan_no
+			refreere
+			sourcing_channel
+			updated_by
+			user_id
+		  }
+		  experience {
+			id
+			description
+			end_year
+			experience_in_years
+			institution
+			start_year
+			organization
+			role_title
+			user_id
+			type
+			related_to_teaching
+			reference {
+			  id
+			  name
+			  context
+			  context_id
+			  contact_number
+			  document_id
+			  type_of_document
+			  designation
+			  document_reference {
+				id
+				user_id
+				name
+				doument_type
+				document_sub_type
+				provider
+				path
+			  }
+			}
+		  }
+		  program_faciltators {
+			parent_ip
+			documents_status
+			availability
+			has_social_work_exp
+			id
+			police_verification_done
+			program_id
+			social_background_verified_by_neighbours
+			user_id
+			village_knowledge_test
+			status
+			form_step_number
+			created_by
+			updated_by
+			academic_year_id
+			qualification_ids
+		  }
+		  qualifications {
+			created_by
+			end_year
+			id
+			institution
+			qualification_master_id
+			start_year
+			updated_by
+			user_id
+			qualification_reference_document_id
+			qualification_master {
+			  context
+			  context_id
+			  created_by
+			  id
+			  name
+			  type
+			  updated_by
+			}
+			document_reference {
+			  id
+			  user_id
+			  name
+			  context
+			  context_id
+			  doument_type
+			  document_sub_type
+			  provider
+			  path
+			}
+		  }
+		  interviews {
+			id
+			owner_user_id
+			end_date_time
+			comment
+			created_at
+			created_by
+			start_date_time
+			status
+			title
+			updated_at
+			updated_by
+			user_id
+			location_type
+			location
+			owner {
+			  first_name
+			  last_name
+			  id
+			}
+		  }
+		  events {
+			context
+			context_id
+			created_by
+			end_date
+			end_time
+			id
+			location
+			location_type
+			start_date
+			start_time
+			updated_by
+			user_id
+		  }
+		  documents(order_by: {id: desc}) {
+			id
+			created_by
+			path
+			provider
+			updated_by
+			user_id
+			name
+			doument_type
+			document_sub_type
+			context
+			context_id
+		  }
+		  references {
+			id
+			name
+			contact_number
+			designation
+		  }
+		}}`,
 		};
 
 		const response = await lastValueFrom(
@@ -810,139 +814,139 @@ export class UserService {
 		query += `program_faciltators: {id: {_is_null: false}, parent_ip: {_eq: "${user?.data?.program_users[0]?.organisation_id}"}}`;
 		var data = {
 			query: `query SearchAttendance($limit:Int, $offset:Int) {
-        users_aggregate(where:{${query}}) {
-          aggregate {
-            count
-          }
-        }
-        users(where:{${query}}, limit: $limit, offset: $offset, order_by: {created_at: desc}) {
-          first_name
-          id
-          last_name
-          dob
-          aadhar_token
-          address
-          block_id
-          block_village_id
-          created_by
-          district_id
-          email_id
-          gender
-          lat
-          long
-          mobile
-          password
-          state_id
-          updated_by
-          profile_url
-          program_users {
-            id
-            organisation_id
-            academic_year_id
-            program_id
-            role_id
-            status
-            user_id
-          }
-          core_faciltator {
-            created_by
-            device_ownership
-            device_type
-            id
-            pan_no
-            refreere
-            sourcing_channel
-            updated_by
-            user_id
-          }
-          experience {
-            description
-            end_year
-            experience_in_years
-            institution
-            start_year
-            organization
-            role_title
-            user_id
-            type
-          }
-          program_faciltators {
-            parent_ip
-            availability
-            has_social_work_exp
-            id
-            police_verification_done
-            program_id
-            social_background_verified_by_neighbours
-            user_id
-            village_knowledge_test
-            status
-            form_step_number
-            created_by
-            updated_by
-          }
-          qualifications {
-            created_by
-            end_year
-            id
-            institution
-            qualification_master_id
-            start_year
-            updated_by
-            user_id
-            qualification_master {
-              context
-              context_id
-              created_by
-              id
-              name
-              type
-              updated_by
-            }
-          }
-          interviews {
-            id
-            owner_user_id
-            end_date_time
-            comment
-            created_at
-            created_by
-            start_date_time
-            status
-            title
-            updated_at
-            updated_by
-            user_id
-            location_type
-            location
-            owner {
-              first_name
-              last_name
-              id
-            }
-          }
-          events {
-            context
-            context_id
-            created_by
-            end_date
-            end_time
-            id
-            location
-            location_type
-            start_date
-            start_time
-            updated_by
-            user_id
-          }
-          documents(order_by: {id: desc}){
-            id
-            user_id
-            name
-            doument_type
-            document_sub_type
-          }
-        }}`,
+		users_aggregate(where:{${query}}) {
+		  aggregate {
+			count
+		  }
+		}
+		users(where:{${query}}, limit: $limit, offset: $offset, order_by: {created_at: desc}) {
+		  first_name
+		  id
+		  last_name
+		  dob
+		  aadhar_token
+		  address
+		  block_id
+		  block_village_id
+		  created_by
+		  district_id
+		  email_id
+		  gender
+		  lat
+		  long
+		  mobile
+		  password
+		  state_id
+		  updated_by
+		  profile_url
+		  program_users {
+			id
+			organisation_id
+			academic_year_id
+			program_id
+			role_id
+			status
+			user_id
+		  }
+		  core_faciltator {
+			created_by
+			device_ownership
+			device_type
+			id
+			pan_no
+			refreere
+			sourcing_channel
+			updated_by
+			user_id
+		  }
+		  experience {
+			description
+			end_year
+			experience_in_years
+			institution
+			start_year
+			organization
+			role_title
+			user_id
+			type
+		  }
+		  program_faciltators {
+			parent_ip
+			availability
+			has_social_work_exp
+			id
+			police_verification_done
+			program_id
+			social_background_verified_by_neighbours
+			user_id
+			village_knowledge_test
+			status
+			form_step_number
+			created_by
+			updated_by
+		  }
+		  qualifications {
+			created_by
+			end_year
+			id
+			institution
+			qualification_master_id
+			start_year
+			updated_by
+			user_id
+			qualification_master {
+			  context
+			  context_id
+			  created_by
+			  id
+			  name
+			  type
+			  updated_by
+			}
+		  }
+		  interviews {
+			id
+			owner_user_id
+			end_date_time
+			comment
+			created_at
+			created_by
+			start_date_time
+			status
+			title
+			updated_at
+			updated_by
+			user_id
+			location_type
+			location
+			owner {
+			  first_name
+			  last_name
+			  id
+			}
+		  }
+		  events {
+			context
+			context_id
+			created_by
+			end_date
+			end_time
+			id
+			location
+			location_type
+			start_date
+			start_time
+			updated_by
+			user_id
+		  }
+		  documents(order_by: {id: desc}){
+			id
+			user_id
+			name
+			doument_type
+			document_sub_type
+		  }
+		}}`,
 			variables: {
 				limit: parseInt(limit),
 				offset: offset,
