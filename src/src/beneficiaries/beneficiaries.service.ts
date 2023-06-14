@@ -194,6 +194,19 @@ export class BeneficiariesService {
 						updated_by
 						village
 						username
+						documents{
+						context
+						context_id
+						created_by
+						document_sub_type
+						doument_type
+						id
+						name
+						path
+						provider
+						updated_by
+						user_id
+						  }
                         program_beneficiaries{
                         id
                         enrollment_status
@@ -358,7 +371,20 @@ export class BeneficiariesService {
 				updated_by
 				village
 				username
-              program_beneficiaries {
+				documents{
+				context
+				context_id
+				created_by
+				document_sub_type
+				doument_type
+				id
+				name
+				path
+				provider
+				updated_by
+				user_id
+				  }
+                program_beneficiaries {
                 id
                 enrollment_status
                 enrolled_for_board
