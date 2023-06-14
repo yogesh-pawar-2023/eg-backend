@@ -149,12 +149,9 @@
 		{ "title": "FACILITATOR_SOCIAL_STATUS_OTHER", "value": "other" }
 	],
 	"BENEFICIARY_MARITAL_STATUS": [
-		{ "title": "BENEFICIARY_MARITAL_STATUS_SINGLE", "value": "single" },
 		{ "title": "BENEFICIARY_MARITAL_STATUS_MARRIED", "value": "married" },
-		{
-			"title": "BENEFICIARY_MARITAL_STATUS_UNMARRIED",
-			"value": "unmarried"
-		}
+		{"title": "BENEFICIARY_MARITAL_STATUS_UNMARRIED","value": "unmarried"},
+    { "title": "BENEFICIARY_MARITAL_STATUS_SINGLE", "value": "single" }
 	],
 	"FACILITATOR_MARITAL_STATUS": [
 		{ "title": "FACILITATOR_MARITAL_STATUS_SINGLE", "value": "single" },
