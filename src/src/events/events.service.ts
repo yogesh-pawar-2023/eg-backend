@@ -68,7 +68,7 @@ export class EventsService {
 			...(req?.context && { context: req?.context }),
 			user_id: req.user_id ? req.user_id : user_id,
 			name: req.name,
-			master_trainer:req.master_trainer,
+			master_trainer: req.master_trainer,
 			created_by: user_id,
 			end_date: req.end_date,
 			end_time: req.end_time,
@@ -223,8 +223,11 @@ export class EventsService {
         type
         updated_by
         user_id
-        attendances {
+        attendances(order_by: {
+		  created_at: asc
+		  }) {
           created_by
+		  created_at
           context
           context_id
           date_time
@@ -243,6 +246,9 @@ export class EventsService {
             profile_url
             aadhar_verified
 			aadhaar_verification_mode
+			program_faciltators{
+			documents_status
+			  }
           }
         }
 
