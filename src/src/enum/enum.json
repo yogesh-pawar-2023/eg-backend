@@ -165,6 +165,10 @@
 	],
 	"REASON_OF_LEAVING_EDUCATION": [
 		{
+			"title": "NA",
+			"value": "na"
+		},
+		{
 			"title": "SCHOOL_BEING_TOO_FAR_AWAY",
 			"value": "school_being_too_far_away"
 		},
@@ -220,6 +224,7 @@
 	],
 	"DOCUMENT_STATUS": [
 		{ "title": "NOT_AVAILABLE", "value": "not_available" },
+		{ "title": "NOT_APPLICABLE", "value": "not_applicable" },
 		{ "title": "UPDATE_REQUIRED", "value": "update_required" },
 		{
 			"title": "APPLIED_NEW_FOR_CHANGE",
