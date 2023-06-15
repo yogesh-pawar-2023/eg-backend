@@ -165,6 +165,10 @@
 	],
 	"REASON_OF_LEAVING_EDUCATION": [
 		{
+			"title": "NA",
+			"value": "na"
+		},
+		{
 			"title": "SCHOOL_BEING_TOO_FAR_AWAY",
 			"value": "school_being_too_far_away"
 		},
