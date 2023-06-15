@@ -96,7 +96,7 @@ export class BeneficiariesService {
 	public async findAll(body: any, req: any, resp: any) {
 		const user = await this.userService.ipUserInfo(req);
 		if (!user?.data?.id) {
-			return resp.status(400).send({
+			return resp.status(404).send({
 				success: false,
 				message: 'Invalid Facilitator',
 				data: {},
