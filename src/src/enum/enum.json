@@ -187,8 +187,14 @@
 			"title": "FACILITATOR_REASONS_FOR_RUSTICATE_VIOLATION_OF_POLICY",
 			"value": "violation_of_policy"
 		},
-		{ "title": "FACILITATOR_REASONS_FOR_RUSTICATE_CRIMINAL_ACTIVITY", "value": "criminal_activity" },
-    { "title": "FACILITATOR_REASONS_FOR_RUSTICATE_ACT_OF_MISCONDUCT_MISBEHAVIOUR", "value": "act_of_misconduct_misbehaviour" }
+		{
+			"title": "FACILITATOR_REASONS_FOR_RUSTICATE_CRIMINAL_ACTIVITY", 
+		  "value": "criminal_activity" 
+		},
+    {
+			"title": "FACILITATOR_REASONS_FOR_RUSTICATE_ACT_OF_MISCONDUCT_MISBEHAVIOUR",
+		  "value": "act_of_misconduct_misbehaviour" 
+		}
 	],
 	"REASON_OF_LEAVING_EDUCATION": [
 		{
