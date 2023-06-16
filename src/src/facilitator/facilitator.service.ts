@@ -129,7 +129,6 @@ export class FacilitatorService {
 						lat
 						long
 						mobile
-						password
 						state_id
 						updated_by
 						profile_url
@@ -978,7 +977,6 @@ export class FacilitatorService {
           lat
           long
           mobile
-          password
           state_id
           updated_by
           profile_url

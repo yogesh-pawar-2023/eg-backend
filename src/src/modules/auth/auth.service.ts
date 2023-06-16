@@ -681,7 +681,6 @@ export class AuthService {
 			'email_id',
 			'keycloak_id',
 			'username',
-			'password',
 		]);
 
 		const user_id = newR[tableName]?.id;
@@ -738,7 +737,6 @@ export class AuthService {
               lat
               long
               mobile
-              password
               state_id
               updated_by
               profile_url
