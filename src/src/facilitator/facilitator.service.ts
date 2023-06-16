@@ -1,10 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { createObjectCsvStringifier } from 'csv-writer';
+import jwt_decode from 'jwt-decode';
 import { UserService } from 'src/user/user.service';
 import { EnumService } from '../enum/enum.service';
 import { HasuraService } from '../services/hasura/hasura.service';
 import { S3Service } from '../services/s3/s3.service';
-
 @Injectable()
 export class FacilitatorService {
 	constructor(
@@ -389,12 +390,10 @@ export class FacilitatorService {
 		let experience_id = body.id;
 		if (
 			experience_id &&
-			!facilitatorUser[body.type].find(
-				(data) => data.id == experience_id,
-			)
+			!facilitatorUser[body.type].find((data) => data.id == experience_id)
 		) {
 			return {
-				errorMessage: "Invalid experience id!",
+				errorMessage: 'Invalid experience id!',
 			};
 		}
 		// Update experience table data
@@ -428,9 +427,9 @@ export class FacilitatorService {
 		}
 
 		if (
-				body.reference_details
-			&& typeof body.reference_details === 'object'
-			&& Object.keys(body.reference_details).length
+			body.reference_details &&
+			typeof body.reference_details === 'object' &&
+			Object.keys(body.reference_details).length
 		) {
 			// Update Reference table data
 			const referencesArr = [
@@ -441,7 +440,9 @@ export class FacilitatorService {
 				'context',
 				'context_id',
 			];
-			keyExist = referencesArr.filter((e) => Object.keys(body.reference_details).includes(e));
+			keyExist = referencesArr.filter((e) =>
+				Object.keys(body.reference_details).includes(e),
+			);
 			let referenceInfo;
 			let referenceDetails;
 			if (keyExist.length) {
@@ -450,35 +451,36 @@ export class FacilitatorService {
 					referenceDetails = facilitatorUser[body.type].find(
 						(data) => data.id == experience_id,
 					)?.reference;
-	
+
 					if (referenceDetails) {
 						if (referenceDetails?.document_reference?.name) {
-							await this.s3Service.deletePhoto(referenceDetails.document_reference.name);
+							await this.s3Service.deletePhoto(
+								referenceDetails.document_reference.name,
+							);
 						}
-						
-						await this.hasuraService.delete(
-							'documents',
-							{
-								user_id: id,
-								context: 'references',
-								context_id: referenceDetails.id
-							},
-						);
+
+						await this.hasuraService.delete('documents', {
+							user_id: id,
+							context: 'references',
+							context_id: referenceDetails.id,
+						});
 					}
 				}
 				referenceInfo = await this.hasuraService.q(
 					tableName,
 					{
 						...body.reference_details,
-						...(
-							(!isNaN(parseInt(body.reference_details?.document_id)))
-							&&
-							{ document_id: body.reference_details?.document_id }
-						),
+						...(!isNaN(
+							parseInt(body.reference_details?.document_id),
+						) && {
+							document_id: body.reference_details?.document_id,
+						}),
 						id: referenceDetails?.id ? referenceDetails?.id : null,
-	
+
 						// If 'experienceInfo' has id then a new experience record has created
-						...((experienceInfo?.id || !referenceDetails) && { context: 'experience' }),
+						...((experienceInfo?.id || !referenceDetails) && {
+							context: 'experience',
+						}),
 						...((experienceInfo?.id || !referenceDetails) && {
 							context_id: experienceInfo.id || experience_id,
 						}),
@@ -488,7 +490,7 @@ export class FacilitatorService {
 				);
 				referenceInfo = referenceInfo.references;
 			}
-	
+
 			// Update Documents table data
 			if (body?.reference_details?.document_id) {
 				const documentsArr = ['context', 'context_id'];
@@ -498,7 +500,11 @@ export class FacilitatorService {
 					{
 						id: body?.reference_details?.document_id ?? null,
 						context: 'references',
-						context_id: referenceInfo?.id ? referenceInfo?.id : referenceDetails?.id ? referenceDetails?.id : null,
+						context_id: referenceInfo?.id
+							? referenceInfo?.id
+							: referenceDetails?.id
+							? referenceDetails?.id
+							: null,
 					},
 					documentsArr,
 					true,
@@ -550,33 +556,34 @@ export class FacilitatorService {
 
 		if (qualificationDetails.id) {
 			if (qualificationDetails.document_reference?.name) {
-				await this.s3Service.deletePhoto(qualificationDetails.document_reference.name);
+				await this.s3Service.deletePhoto(
+					qualificationDetails.document_reference.name,
+				);
 			}
-				
-			await this.hasuraService.delete(
-				'documents',
-				{
-					user_id: id,
-					context: 'qualifications',
-					context_id: qualificationDetails.id
-				},
-			);
+
+			await this.hasuraService.delete('documents', {
+				user_id: id,
+				context: 'qualifications',
+				context_id: qualificationDetails.id,
+			});
 		}
 
 		let newCreatedQualificationDetails;
 
 		if (keyExist.length) {
 			const tableName = 'qualifications';
-			newCreatedQualificationDetails = (await this.hasuraService.q(
-				tableName,
-				{
-					...body,
-					id: qualificationDetails?.id ?? null,
-					user_id: id,
-				},
-				qualificationsArr,
-				true,
-			)).qualifications;
+			newCreatedQualificationDetails = (
+				await this.hasuraService.q(
+					tableName,
+					{
+						...body,
+						id: qualificationDetails?.id ?? null,
+						user_id: id,
+					},
+					qualificationsArr,
+					true,
+				)
+			).qualifications;
 		}
 
 		// Update Program facilitators table data
@@ -590,7 +597,9 @@ export class FacilitatorService {
 			await this.hasuraService.q(
 				tableName,
 				{
-					qualification_ids: JSON.stringify(body.qualification_ids).replace(/"/g, '\\"'),
+					qualification_ids: JSON.stringify(
+						body.qualification_ids,
+					).replace(/"/g, '\\"'),
 					id: programDetails.id,
 				},
 				programFacilitatorsArr,
@@ -607,10 +616,10 @@ export class FacilitatorService {
 				id: body.qualification_reference_document_id ?? null,
 				context: 'qualifications',
 				context_id: qualificationDetails.id
-							? qualificationDetails.id
-							: newCreatedQualificationDetails.id
-							? newCreatedQualificationDetails.id
-							: null,
+					? qualificationDetails.id
+					: newCreatedQualificationDetails.id
+					? newCreatedQualificationDetails.id
+					: null,
 			},
 			documentsArr,
 			true,
@@ -848,6 +857,65 @@ export class FacilitatorService {
 				return false;
 			}
 		});
+	}
+	async exportFileToCsv(req: any, body: any, resp: any) {
+		try {
+			const user = await this.userService.ipUserInfo(req);
+			const decoded: any = jwt_decode(req?.headers?.authorization);
+			console.log('user id', decoded?.name);
+			const data = {
+				query: `query MyQuery {
+					users(where: {program_faciltators: {parent_ip: {_eq: "${user?.data?.program_users[0]?.organisation_id}"}}}){
+						first_name
+						last_name
+						district
+						mobile
+						gender
+						district
+					    program_faciltators{
+						status
+					  }
+					}
+				  }
+				  `,
+			};
+			const hasuraResponse = await this.hasuraService.getData(data);
+			const allFacilitators = hasuraResponse?.data?.users;
+			const csvStringifier = createObjectCsvStringifier({
+				header: [
+					{ id: 'name', title: 'Name' },
+					{ id: 'district', title: 'District' },
+					{ id: 'mobile', title: 'Mobile Number' },
+					{ id: 'status', title: 'Status' },
+					{ id: 'gender', title: 'Gender' },
+				],
+			});
+
+			const records = [];
+			for (let data of allFacilitators) {
+				const dataObject = {};
+				dataObject['name'] = data?.first_name + ' ' + data?.last_name;
+				dataObject['district'] = data?.district;
+				dataObject['mobile'] = data?.mobile;
+				dataObject['status'] = data?.program_faciltators[0]?.status;
+				dataObject['gender'] = data?.gender;
+				records.push(dataObject);
+			}
+			let fileName = `${decoded?.name.replace(' ', '_')}_${new Date()
+				.toLocaleDateString()
+				.replace(/\//g, '-')}.csv`;
+			const fileData =
+				csvStringifier.getHeaderString() +
+				csvStringifier.stringifyRecords(records);
+			resp.header('Content-Type', 'text/csv');
+			return resp.attachment(fileName).send(fileData);
+		} catch (error) {
+			return resp.status(500).json({
+				success: false,
+				message: 'File Does Not Export!',
+				data: {},
+			});
+		}
 	}
 
 	async getFacilitators(req: any, body: any) {
