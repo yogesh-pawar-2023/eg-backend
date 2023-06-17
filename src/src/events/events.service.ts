@@ -462,7 +462,48 @@ export class EventsService {
 		}
 	}
 
-	remove(id: number) {
-		return this.hasuraService.delete(this.table, { id: +id });
+	async remove(id: number,resp:any) {
+		try{
+		const data = {
+			query: `query MyQuery {
+			events(where: {id: {_eq: ${id}}}){
+				id
+				user_id
+				name
+				created_by
+				updated_by
+				attendances{
+				id
+				user_id
+				}
+			}
+			}`,
+		};
+		const response = await this.hasuraServiceFromServices.getData(data);
+		let eventDetails = response?.data?.events[0];
+		const deletePromise=[]
+		if (eventDetails?.attendances && eventDetails?.attendances?.length > 0) {
+			for (const iterator of eventDetails?.attendances) {
+				deletePromise.push(
+					this.hasuraService.delete('attendance', {
+						id: +iterator.id,
+					}),
+				);
+			}
+			const removedAttendees = await Promise.all(deletePromise);
+		}
+	   const  deleteEvent=await this.hasuraService.delete(this.table, { id: +id });
+	   return resp.status(200).send({
+		success: true,
+		message: 'Event Deleted Successfully',
+		data: { events: deleteEvent?.events },
+	});
+	}catch(error){
+	   return resp.status(500).send({
+		success: false,
+		message: error.message,
+		data: {},
+	});
+	}
 	}
 }
