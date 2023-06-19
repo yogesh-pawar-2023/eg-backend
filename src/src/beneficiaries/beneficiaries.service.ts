@@ -1101,18 +1101,55 @@ export class BeneficiariesService {
 				// );
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
+				let myRequest={}
+				if(req.enrollment_status=="enrolled"){
+					let messageArray=[]
+					let tempArray=["enrollment_number","enrollment_status","enrolled_for_board","subjects","payment_receipt_document_id"];
+				for(let info of tempArray){
+				if(req[info]===undefined || req[info]===""){
+					messageArray.push(`please send ${info} `)
+				}
+				}
+				if(messageArray.length>0){
+					return response.status(400).send({
+						success: false,
+						message: messageArray,
+						data: {},
+					});
+				}else {
+					myRequest={...req,
+						subjects:JSON.stringify(req.subjects).replace(
+							/"/g,
+							'\\"',
+						)}	
+				}
 
+				}
+                if(req.enrollment_status=="not_enrolled"){
+					myRequest['enrollment_status']=req?.enrollment_status
+				}
+				if(req.enrollment_status=="applied_but_pending"||req.enrollment_status=="rejected"){
+					myRequest['enrolled_for_board']=req?.enrolled_for_board
+					myRequest['enrollment_status']=req?.enrollment_status
+				}
+				if(req.enrollment_status=="other"){
+					let subject
+					if(req.subjects){
+						subject= JSON.stringify(req.subjects).replace(
+							/"/g,
+							'\\"',
+						)
+					}
+					myRequest={...req,
+					...(req.subjects && { subjects: subject }),
+						enrollment_status:req?.enrollment_status}
+				}
 				await this.hasuraService.q(
 					tableName,
 					{
-						...req,
+						...myRequest,
 						id: programDetails?.id ? programDetails.id : null,
 						user_id: user_id,
-
-						subjects: JSON.stringify(req.subjects).replace(
-							/"/g,
-							'\\"',
-						),
 					},
 					userArr,
 					update,
