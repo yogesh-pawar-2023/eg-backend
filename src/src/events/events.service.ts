@@ -498,7 +498,7 @@ export class EventsService {
 			};
 			const eventcreatedUserResponse = await this.hasuraServiceFromServices.getData(EventUserdata);
 			const eventUserOrganizationId =eventcreatedUserResponse?.data?.users_by_pk?.program_users[0]?.organisation_id;
-			//if logged in user and event created user organization id is same then only perform delete operation
+			//if logged user and event created user organization id is same then only perform delete operation
 			if (organizationId == eventUserOrganizationId) {
 				const deletePromise = [];
 				if (
