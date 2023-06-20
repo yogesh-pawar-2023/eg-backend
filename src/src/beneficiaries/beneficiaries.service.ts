@@ -532,6 +532,7 @@ export class BeneficiariesService {
 			});
 		} else {
 			result.program_beneficiaries = result?.program_beneficiaries?.[0];
+			//response mapping convert array to object
 			for (const key of [
 				'references',
 				'qualifications',
