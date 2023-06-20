@@ -534,9 +534,6 @@ export class BeneficiariesService {
 			result.program_beneficiaries = result?.program_beneficiaries?.[0];
 			//response mapping convert array to object
 			for (const key of [
-				'references',
-				'qualifications',
-				'program_faciltators',
 				'profile_photo_1',
 				'profile_photo_2',
 				'profile_photo_3',
