@@ -368,9 +368,41 @@ export class BeneficiariesService {
 				mobile_no_verified
 				password
 				pincode
-				profile_photo_1
-				profile_photo_2
-				profile_photo_3
+				aadhaar_front: documents(where: {document_sub_type: {_eq: "aadhaar_front"}}) {
+					id
+					name
+					doument_type
+					document_sub_type
+					path
+					}
+				aadhaar_back: documents(where: {document_sub_type: {_eq: "aadhaar_back"}}) {
+					id
+					name
+					doument_type
+					document_sub_type
+					path
+					}
+				profile_photo_1: documents(where: {document_sub_type: {_eq: "profile_photo_1"}}) {
+					id
+					name
+					doument_type
+					document_sub_type
+					path
+					}
+					profile_photo_2: documents(where: {document_sub_type: {_eq: "profile_photo_2"}}) {
+					id
+					name
+					doument_type
+					document_sub_type
+					path
+					}
+					profile_photo_3: documents(where: {document_sub_type: {_eq: "profile_photo_3"}}) {
+					id
+					name
+					doument_type
+					document_sub_type
+					path
+					}
 				profile_url
 				state
 				state_id
