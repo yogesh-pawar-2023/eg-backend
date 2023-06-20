@@ -698,6 +698,10 @@ export class BeneficiariesService {
 					'career_aspiration',
 					'career_aspiration_details',
 				],
+				program_beneficiaries: [
+					'learning_motivation',
+					'type_of_support_needed',
+				],
 			},
 			edit_enrollement: {
 				program_beneficiaries: [
@@ -1074,11 +1078,16 @@ export class BeneficiariesService {
 				const userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.edit_further_studies
 						.core_beneficiaries;
+				const userArr2 =
+					PAGE_WISE_UPDATE_TABLE_DETAILS.edit_further_studies
+						.program_beneficiaries;
 				let tableName = 'core_beneficiaries';
 				await this.hasuraService.q(
 					tableName,
 					{
-						...req,
+						career_aspiration: req?.career_aspiration,
+						career_aspiration_details:
+							req?.career_aspiration_details,
 						id: beneficiaryUser?.core_beneficiaries?.id
 							? beneficiaryUser?.core_beneficiaries?.id
 							: null,
@@ -1087,6 +1096,21 @@ export class BeneficiariesService {
 					userArr,
 					update,
 				);
+				const programDetails = beneficiaryUser.program_beneficiaries;
+				//update further_studies in program_beneficiaries table
+				await this.hasuraService.q(
+					'program_beneficiaries',
+					{
+						learning_motivation:
+							req?.aspiration_mapping.learning_motivation,
+						type_of_support_needed:
+							req?.aspiration_mapping.type_of_support_needed,
+						id: programDetails?.id ? programDetails.id : null,
+					},
+					userArr2,
+					update,
+				);
+
 				break;
 			}
 			case 'edit_enrollement': {
