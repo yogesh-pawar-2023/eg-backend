@@ -532,6 +532,20 @@ export class BeneficiariesService {
 			});
 		} else {
 			result.program_beneficiaries = result?.program_beneficiaries?.[0];
+			//response mapping convert array to object
+			for (const key of [
+				'profile_photo_1',
+				'profile_photo_2',
+				'profile_photo_3',
+				'aadhaar_front',
+				'aadhaar_back',
+			]) {
+				if (result?.[key] && result?.[key][0]) {
+					result[key] = result[key][0];
+				} else {
+					result = { ...result, [key]: {} };
+				}
+			}
 			return resp.status(200).json({
 				success: true,
 				message: 'Benificiaries found successfully!',
