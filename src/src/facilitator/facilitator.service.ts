@@ -963,6 +963,7 @@ export class FacilitatorService {
 						last_name
 						district
 						mobile
+						block
 						gender
 						district
 					    program_faciltators{
@@ -978,6 +979,7 @@ export class FacilitatorService {
 				header: [
 					{ id: 'name', title: 'Name' },
 					{ id: 'district', title: 'District' },
+					{ id: 'block', title: 'Block' },
 					{ id: 'mobile', title: 'Mobile Number' },
 					{ id: 'status', title: 'Status' },
 					{ id: 'gender', title: 'Gender' },
@@ -989,6 +991,7 @@ export class FacilitatorService {
 				const dataObject = {};
 				dataObject['name'] = data?.first_name + ' ' + data?.last_name;
 				dataObject['district'] = data?.district;
+				dataObject['block'] = data?.block;
 				dataObject['mobile'] = data?.mobile;
 				dataObject['status'] = data?.program_faciltators[0]?.status;
 				dataObject['gender'] = data?.gender;
