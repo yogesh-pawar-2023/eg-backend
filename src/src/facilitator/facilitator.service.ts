@@ -345,8 +345,8 @@ export class FacilitatorService {
 		const keyExist = userArr.filter((e) => Object.keys(body).includes(e));
 		if (keyExist.length) {
 			const tableName = 'users';
-			body.id = id;
-			await this.hasuraService.q(tableName, body, userArr, true);
+			const newReq = { ...body,id:id, ...(body?.dob == '' && { dob: null }) };
+			await this.hasuraService.q(tableName, newReq, userArr, true);
 		}
 	}
 
