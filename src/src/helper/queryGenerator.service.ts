@@ -114,7 +114,7 @@ export class QueryGeneratorService {
 				if (type === 'obj') {
 					if (
 						typeof item[e] !== 'string' &&
-						['mobile', 'alternative_mobile_number', 'dob'].includes(
+						['mobile', 'alternative_mobile_number', 'dob','enrollment_number',"payment_receipt_document_id"].includes(
 							e,
 						)
 					) {
