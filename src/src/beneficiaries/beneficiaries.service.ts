@@ -1222,7 +1222,7 @@ export class BeneficiariesService {
 					myRequest['payment_receipt_document_id'] = null;
 					const data = {
 						query: `query searchById {
-							users_by_pk(id: 753) {
+							users_by_pk(id: ${req.id}) {
 							id
 							program_beneficiaries{
 						    payment_receipt_document_id
