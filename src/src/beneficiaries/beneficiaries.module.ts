@@ -11,7 +11,7 @@ import { KeycloakModule } from '../services/keycloak/keycloak.module';
 import { BeneficiariesService } from './beneficiaries.service';
 
 @Module({
-  imports:[UserModule, HttpModule, HasuraModule, HelperModule, KeycloakModule, HasuraModuleFromServices,S3Module],
+  imports:[UserModule, HttpModule, HasuraModule, HelperModule, KeycloakModule, HasuraModuleFromServices, S3Module],
   controllers: [BeneficiariesController],
   providers: [BeneficiariesService]
 })

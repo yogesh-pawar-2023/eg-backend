@@ -1223,16 +1223,16 @@ export class BeneficiariesService {
 					const data = {
 						query: `query searchById {
 							users_by_pk(id: ${req.id}) {
-							id
-							program_beneficiaries{
-						    payment_receipt_document_id
-						    document{
-							id
-							name
-						  }
-						}
+								id
+								program_beneficiaries{
+									payment_receipt_document_id
+									document {
+										id
+										name
+								  }
+							  }
 							}
-				        }`,
+				    }`,
 					};
 					const response =
 						await this.hasuraServiceFromServices.getData(data);
