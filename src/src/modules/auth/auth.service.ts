@@ -435,7 +435,21 @@ export class AuthService {
 			response,
 		);
 	}
+	public async okyc2AadhaarVerification(body, request, response) {
+		return await this.aadhaarKycService.okyc2AadhaarVerification(
+			body,
+			request,
+			response,
+		);
+	}
 
+	public async getOkyc2AadhaarVerification(id, request, response) {
+		return await this.aadhaarKycService.getOkyc2AadhaarVerification(
+			id,
+			request,
+			response,
+		);
+	}
 	public async register(body, response) {
 		console.log('body', body);
 
