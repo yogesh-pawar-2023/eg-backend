@@ -263,6 +263,12 @@ export class BeneficiariesService {
                         facilitator_id
                         created_by
                         beneficiaries_found_at
+						enrollment_date,
+						enrollment_first_name,
+						enrollment_middle_name,
+						enrollment_last_name,
+						enrollment_dob,
+						enrollment_aadhaar_no,
 						document {
 							context
 							context_id
@@ -478,6 +484,12 @@ export class BeneficiariesService {
                 facilitator_id
                 created_by
                 beneficiaries_found_at
+				enrollment_date,
+				enrollment_first_name,
+				enrollment_middle_name,
+				enrollment_last_name,
+				enrollment_dob,
+				enrollment_aadhaar_no,
 				document {
 					context
 					context_id
@@ -806,7 +818,6 @@ export class BeneficiariesService {
 			},
 			edit_enrollement_details: {
 				program_beneficiaries: [
-					'enrollment_date',
 					'enrollment_first_name',
 					'enrollment_middle_name',
 					'enrollment_last_name',
@@ -1270,6 +1281,7 @@ export class BeneficiariesService {
 						'enrollment_status',
 						'enrolled_for_board',
 						'subjects',
+						'enrollment_date',
 						'payment_receipt_document_id',
 					];
 					for (let info of tempArray) {
@@ -1384,7 +1396,6 @@ export class BeneficiariesService {
 				if (req.enrollment_status == 'enrolled') {
 					let messageArray = [];
 					let tempArray = [
-						'enrollment_date',
 						'enrollment_first_name',
 						'enrollment_middle_name',
 						'enrollment_last_name',
