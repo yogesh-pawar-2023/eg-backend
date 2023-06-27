@@ -674,7 +674,7 @@ export class BeneficiariesService {
 	async create(req: any, request, response, update = false) {
 		const user = await this.userService.ipUserInfo(request);
 		const { data: beneficiaryUser } = await this.userById(req.id);
-		if (beneficiaryUser === null) {
+		if (!beneficiaryUser) {
 			return response.status(400).json({
 				success: false,
 				message: 'Invalid user_id!',
@@ -1089,7 +1089,7 @@ export class BeneficiariesService {
 				userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.add_education
 						.program_beneficiaries;
-				const programDetails = beneficiaryUser.program_beneficiaries;
+				const programDetails = beneficiaryUser?.program_beneficiaries;
 				tableName = 'program_beneficiaries';
 
 				await this.hasuraService.q(
