@@ -435,16 +435,16 @@ export class AuthService {
 			response,
 		);
 	}
-	public async okyc2AadhaarVerification(body, request, response) {
-		return await this.aadhaarKycService.okyc2AadhaarVerification(
+	public async okyc2AadhaarVerify(body, request, response) {
+		return await this.aadhaarKycService.okyc2AadhaarVerify(
 			body,
 			request,
 			response,
 		);
 	}
 
-	public async getOkyc2AadhaarVerification(id, request, response) {
-		return await this.aadhaarKycService.getOkyc2AadhaarVerification(
+	public async getOkyc2AadhaarVerificationStatus(id, request, response) {
+		return await this.aadhaarKycService.getOkyc2AadhaarVerificationStatus(
 			id,
 			request,
 			response,

@@ -188,7 +188,8 @@ export class AadhaarKycService {
 			});
 		}
 	}
-	public async okyc2AadhaarVerification(body, req, resp) {
+	
+	public async okyc2AadhaarVerify(body, req, resp) {
 		const url = `${process.env.AADHAAR_OKYC2_API_URL}`;
 		const data = { ...body };
 		try {
@@ -218,7 +219,7 @@ export class AadhaarKycService {
 			});
 		}
 	}
-	public async getOkyc2AadhaarVerification(id, req, resp) {
+	public async getOkyc2AadhaarVerificationStatus(id, req, resp) {
 		const url = `${process.env.AADHAAR_OKYC2_API_URL}/${id}`;
 		console.log("url",url)
 		try {
