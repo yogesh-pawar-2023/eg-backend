@@ -203,9 +203,27 @@ export class BeneficiariesService {
 						mobile_no_verified
 						password
 						pincode
-						profile_photo_1
-						profile_photo_2
-						profile_photo_3
+						profile_photo_1: documents (where: { document_sub_type: {_eq: "profile_photo_1"}}) {
+							id
+							name
+							doument_type
+							document_sub_type
+							path
+						}
+						profile_photo_2: documents (where: { document_sub_type: {_eq: "profile_photo_2"}}) {
+							id
+							name
+							doument_type
+							document_sub_type
+							path
+						}
+						profile_photo_3: documents (where: { document_sub_type: {_eq: "profile_photo_3"}}) {
+							id
+							name
+							doument_type
+							document_sub_type
+							path
+						}
 						profile_url
 						state
 						state_id
@@ -245,6 +263,12 @@ export class BeneficiariesService {
                         facilitator_id
                         created_by
                         beneficiaries_found_at
+						enrollment_date,
+						enrollment_first_name,
+						enrollment_middle_name,
+						enrollment_last_name,
+						enrollment_dob,
+						enrollment_aadhaar_no,
 						document {
 							context
 							context_id
@@ -333,6 +357,12 @@ export class BeneficiariesService {
 							e?.['program_faciltators']?.[0],
 						['program_beneficiaries']:
 							e?.['program_beneficiaries']?.[0],
+						['profile_photo_1']:
+							e?.['profile_photo_1']?.[0] || {},
+						['profile_photo_2']:
+							e?.['profile_photo_2']?.[0] || {},
+						['profile_photo_3']:
+							e?.['profile_photo_3']?.[0] || {},
 					})),
 					limit,
 					currentPage: page,
@@ -454,6 +484,12 @@ export class BeneficiariesService {
                 facilitator_id
                 created_by
                 beneficiaries_found_at
+				enrollment_date,
+				enrollment_first_name,
+				enrollment_middle_name,
+				enrollment_last_name,
+				enrollment_dob,
+				enrollment_aadhaar_no,
 				document {
 					context
 					context_id
@@ -772,6 +808,21 @@ export class BeneficiariesService {
 					'facilitator_id',
 					'academic_year_id',
 					'payment_receipt_document_id',
+					'enrollment_date',
+					'enrollment_first_name',
+					'enrollment_middle_name',
+					'enrollment_last_name',
+					'enrollment_dob',
+					'enrollment_aadhaar_no',
+				],
+			},
+			edit_enrollement_details: {
+				program_beneficiaries: [
+					'enrollment_first_name',
+					'enrollment_middle_name',
+					'enrollment_last_name',
+					'enrollment_dob',
+					'enrollment_aadhaar_no',
 				],
 			},
 			//update document status
@@ -1099,6 +1150,19 @@ export class BeneficiariesService {
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 
+				req.learning_motivation = req.learning_motivation.length
+					? JSON.stringify(req.learning_motivation).replace(
+							/"/g,
+							'\\"',
+					  )
+					: null;
+				req.type_of_support_needed = req.type_of_support_needed.length
+					? JSON.stringify(req.type_of_support_needed).replace(
+							/"/g,
+							'\\"',
+					  )
+					: null;
+
 				await this.hasuraService.q(
 					tableName,
 					{
@@ -1118,6 +1182,19 @@ export class BeneficiariesService {
 						.program_beneficiaries;
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
+
+				req.learning_motivation = req.learning_motivation.length
+					? JSON.stringify(req.learning_motivation).replace(
+							/"/g,
+							'\\"',
+					  )
+					: null;
+				req.type_of_support_needed = req.type_of_support_needed.length
+					? JSON.stringify(req.type_of_support_needed).replace(
+							/"/g,
+							'\\"',
+					  )
+					: null;
 
 				await this.hasuraService.q(
 					tableName,
@@ -1156,6 +1233,19 @@ export class BeneficiariesService {
 				);
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				//update further_studies in program_beneficiaries table
+				req.aspiration_mapping.learning_motivation = req
+					.aspiration_mapping.learning_motivation.length
+					? JSON.stringify(
+							req.aspiration_mapping.learning_motivation,
+					  ).replace(/"/g, '\\"')
+					: null;
+				req.aspiration_mapping.type_of_support_needed = req
+					.aspiration_mapping.type_of_support_needed.length
+					? JSON.stringify(
+							req.aspiration_mapping.type_of_support_needed,
+					  ).replace(/"/g, '\\"')
+					: null;
+
 				await this.hasuraService.q(
 					'program_beneficiaries',
 					{
@@ -1191,6 +1281,7 @@ export class BeneficiariesService {
 						'enrollment_status',
 						'enrolled_for_board',
 						'subjects',
+						'enrollment_date',
 						'payment_receipt_document_id',
 					];
 					for (let info of tempArray) {
@@ -1220,6 +1311,12 @@ export class BeneficiariesService {
 					myRequest['enrolled_for_board'] = null;
 					myRequest['subjects'] = null;
 					myRequest['payment_receipt_document_id'] = null;
+					myRequest['enrollment_date'] = null;
+					myRequest['enrollment_first_name'] = null;
+					myRequest['enrollment_middle_name'] = null;
+					myRequest['enrollment_last_name'] = null;
+					myRequest['enrollment_dob'] = null;
+					myRequest['enrollment_aadhaar_no'] = null;
 					const data = {
 						query: `query searchById {
 							users_by_pk(id: ${req.id}) {
@@ -1282,6 +1379,58 @@ export class BeneficiariesService {
 				);
 				break;
 			}
+
+			case 'edit_enrollement_details': {
+				// Update enrollement data in Beneficiaries table
+				const userArr =
+					PAGE_WISE_UPDATE_TABLE_DETAILS.edit_enrollement_details
+						.program_beneficiaries;
+				// const programDetails = beneficiaryUser.program_beneficiaries.find(
+				//   (data) =>
+				//     req.id == data.user_id &&
+				//     req.academic_year_id == 1,
+				// );
+				const programDetails = beneficiaryUser.program_beneficiaries;
+				let tableName = 'program_beneficiaries';
+				let myRequest = {};
+				if (req.enrollment_status == 'enrolled') {
+					let messageArray = [];
+					let tempArray = [
+						'enrollment_first_name',
+						'enrollment_middle_name',
+						'enrollment_last_name',
+						'enrollment_dob',
+						'enrollment_aadhaar_no',
+					];
+					for (let info of tempArray) {
+						if (req[info] === undefined || req[info] === '') {
+							messageArray.push(`please send ${info} `);
+						}
+					}
+					if (messageArray.length > 0) {
+						return response.status(400).send({
+							success: false,
+							message: messageArray,
+							data: {},
+						});
+					} else {
+						myRequest = {
+							...req,
+						};
+					}
+				}
+				await this.hasuraService.q(
+					tableName,
+					{
+						...myRequest,
+						id: programDetails?.id ? programDetails.id : null,
+					},
+					userArr,
+					update,
+				);
+				break;
+			}
+
 			case 'document_status': {
 				// Update Document status data in Beneficiaries table
 				const userArr =
@@ -1432,6 +1581,12 @@ export class BeneficiariesService {
             learning_motivation
             type_of_support_needed
 			learning_level
+			enrollment_date,
+			enrollment_first_name,
+			enrollment_middle_name,
+			enrollment_last_name,
+			enrollment_dob,
+			enrollment_aadhaar_no,
 			document {
 				context
 				context_id
