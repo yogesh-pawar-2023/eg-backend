@@ -221,11 +221,11 @@ export class AuthService {
                 }
               }`,
 		};
-		const userRes = await this.hasuraService.postData(query);
+		const userRes:any = await this.hasuraService.postData(query);
 		console.log('userRes', userRes);
 
-		if (userRes.data.users.length > 0) {
-			const mobile = userRes.data.users[0].mobile;
+		if (userRes?.data?.users?.length > 0) {
+			const mobile = userRes?.data?.users[0]?.mobile;
 
 			if (mobile) {
 				const sendOtpRes = await this.generateAndSendOtp(
