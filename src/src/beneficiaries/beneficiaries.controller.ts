@@ -92,12 +92,12 @@ export class BeneficiariesController {
 	@Put('statusUpdate')
 	@UseGuards(new AuthGuard())
 	@UsePipes(ValidationPipe)
-	async statusUpdate(@Body() request: StatusUpdateDTO,@Res() response: any) {
-	const result= await this.beneficiariesService.statusUpdate(request);
-	return response.status(result.status).json({
-		success: result.success,
-		message: result.message,
-		data: result.data
-	});
+	async statusUpdate(@Body() request: StatusUpdateDTO, @Res() response: any) {
+		const result = await this.beneficiariesService.statusUpdate(request);
+		return response.status(result.status).json({
+			success: result.success,
+			message: result.message,
+			data: result.data,
+		});
 	}
 }
