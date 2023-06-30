@@ -1485,15 +1485,26 @@ export class BeneficiariesService {
 				);
 
 				const { data: updatedUser } = await this.userById(req.id);
-				if (updatedUser.program_beneficiaries.enrollment_number&&
-					updatedUser?.program_beneficiaries?.enrollment_aadhaar_no === updatedUser?.aadhar_no
-				) {
-					const status = await this.statusUpdate({
-						user_id: req.id,
-						status: 'enrolled',
-						reason_for_status_update: 'enrolled',
-					});
+				if (updatedUser.program_beneficiaries.enrollment_number) {
+					if (req?.is_eligible === 'no') {
+						const status = await this.statusUpdate({
+							user_id: req.id,
+							status: 'ineligible_for_pragati_camp',
+							reason_for_status_update:
+								'The age of the learner should not be 14 to 29',
+						});
+					} else if (
+						updatedUser?.program_beneficiaries
+							?.enrollment_aadhaar_no === updatedUser?.aadhar_no
+					) {
+						const status = await this.statusUpdate({
+							user_id: req.id,
+							status: 'enrolled',
+							reason_for_status_update: 'enrolled',
+						});
+					}
 				}
+
 				break;
 			}
 
