@@ -626,7 +626,12 @@ export class BeneficiariesService {
 		const res = await this.hasuraService.update(
 			updatedUser?.program_beneficiaries?.id,
 			'program_beneficiaries',
-			req,
+			{
+				...req,
+				reason_for_status_update: req.reason_for_status_update?.trim()
+					? req.reason_for_status_update?.trim()
+					: req.status,
+			},
 			this.returnFields,
 			[...this.returnFields, 'id'],
 		);
@@ -1632,8 +1637,8 @@ export class BeneficiariesService {
             created_by
             facilitator_id
             id
-			status
-			reason_for_status_update
+            status
+            reason_for_status_update
             academic_year_id
             user_id
             enrollment_number
