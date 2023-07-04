@@ -94,7 +94,7 @@ export class BeneficiariesService {
 		});
 		return resp.status(200).json({
 			success: true,
-			message: 'Benificiaries found successfully!',
+			message: 'Data found successfully!',
 			data: {
 				data: res,
 			},
