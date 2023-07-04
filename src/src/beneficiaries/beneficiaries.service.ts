@@ -62,7 +62,7 @@ export class BeneficiariesService {
 			'10th_passed',
 		];
 		let qury = `query MyQuery {
-      ${status.map(
+        ${status.map(
 			(item) => `${
 				!isNaN(Number(item[0])) ? '_' + item : item
 			}:program_beneficiaries_aggregate(where: {
