@@ -187,6 +187,7 @@
 			"value": "prerak_camp_execution_training"
 		}
 	],
+
 	"BENEFICIARY_REASONS_FOR_REJECTING_LEARNER": [
 		{
 			"title": "BENEFICIARY_REASONS_FOR_REJECTING_LEARNER_BEHAVIORAL_ISSUES",
@@ -197,6 +198,7 @@
 			"value": "no_documents_are_available"
 		}
 	],
+	
 	"FACILITATOR_REASONS_FOR_QUIT": [
 		{
 			"title": "FACILITATOR_REASONS_FOR_QUIT_GOT_ANOTHER_JOB",
