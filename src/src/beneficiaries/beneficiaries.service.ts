@@ -103,7 +103,6 @@ export class BeneficiariesService {
 
 	public async findAll(body: any, req: any, resp: any) {
 		const user = await this.userService.ipUserInfo(req);
-		console.log('user', user);
 		if (!user?.data?.id) {
 			return resp.status(404).send({
 				success: false,
@@ -339,7 +338,6 @@ export class BeneficiariesService {
 
                   }`,
 		};
-		console.log('my query', data.query);
 		const response = await this.hasuraServiceFromServices.getData(data);
 		let result = response?.data?.users;
 
