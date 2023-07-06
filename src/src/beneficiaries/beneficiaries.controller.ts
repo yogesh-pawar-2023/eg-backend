@@ -49,14 +49,14 @@ export class BeneficiariesController {
 		return this.beneficiariesService.findAll(request, req, response);
 	}
 
-	@Post('/ip')
+	@Post('/admin/list')
 	@UseGuards(new AuthGuard())
 	findAllAgForIp(
 		@Body() request: Record<string, any>,
 		@Req() req: any,
 		@Res() response: Response,
 	) {
-		return this.beneficiariesService.findAllAgForIp(request, req, response);
+		return this.beneficiariesService.getList(request, req, response);
 	}
 
 	@Get('/getStatuswiseCount')

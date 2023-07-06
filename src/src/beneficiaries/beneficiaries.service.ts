@@ -101,7 +101,7 @@ export class BeneficiariesService {
 		});
 	}
 
-	public async findAllAgForIp(body: any, req: any, resp: any) {
+	public async getList(body: any, req: any, resp: any) {
 		const user = await this.userService.ipUserInfo(req);
 		if (!user?.data?.program_users?.[0]?.organisation_id) {
 			return resp.status(404).send({
