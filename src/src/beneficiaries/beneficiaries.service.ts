@@ -101,6 +101,119 @@ export class BeneficiariesService {
 		});
 	}
 
+	public async findAllAgForIp(body: any, req: any, resp: any) {
+		const user = await this.userService.ipUserInfo(req);
+		if (!user?.data?.program_users?.[0]?.organisation_id) {
+			return resp.status(404).send({
+				success: false,
+				message: 'Invalid Ip',
+				data: {},
+			});
+		}
+		const sortType = body?.sortType ? body?.sortType : 'desc';
+		const page = isNaN(body.page) ? 1 : parseInt(body.page);
+		const limit = isNaN(body.limit) ? 15 : parseInt(body.limit);
+		let offset = page > 1 ? limit * (page - 1) : 0;
+		let status = body?.status;
+		let filterQueryArray = [];
+		filterQueryArray.push(
+			`{ program_beneficiaries: { facilitator_user: { program_faciltators: { parent_ip: { _eq: "${user?.data?.program_users[0]?.organisation_id}" } } } } }`,
+		);
+		if (body?.district && body?.district !== '') {
+			filterQueryArray.push(`{district:{_eq:${body?.district}}}`);
+		}
+
+		if (body?.block && body?.block !== '') {
+			filterQueryArray.push(`{block:{_eq:${body?.block}}}`);
+		}
+
+		if (body.facilitator && body.facilitator !== '') {
+			filterQueryArray.push(`{
+				program_beneficiaries: {facilitator_id: {_eq: ${body?.facilitator}}}
+			  }`);
+		}
+
+		if (status && status !== '') {
+			if (status === 'identified') {
+				filterQueryArray.push(`{
+					_or: [
+						{ program_beneficiaries: { status: { _eq: "identified" } } },
+						{ program_beneficiaries: { status: { _is_null: true } } },
+						{ program_beneficiaries: { status: { _eq: "" } } },
+					]
+				}`);
+			} else {
+				filterQueryArray.push(
+					`{program_beneficiaries:{status:{_eq:${status}}}}`,
+				);
+			}
+		}
+
+		let filterQuery = '{ _and: [' + filterQueryArray.join(',') + '] }';
+		var data = {
+			query: `query MyQuery($limit:Int, $offset:Int) {
+				users_aggregate(where:${filterQuery}) {
+				  aggregate {
+					count
+				  }
+				}
+				users(where: ${filterQuery},
+				limit: $limit,
+                      offset: $offset,
+                      order_by: {
+                        created_at: ${sortType}
+                      }
+				) {
+					id
+					first_name
+					last_name
+					district
+					block
+					mobile
+				    program_beneficiaries {
+					id
+					facilitator_id
+					status
+					
+				  }
+				}
+			  }`,
+			variables: {
+				limit: limit,
+				offset: offset,
+			},
+		};
+
+		const response = await this.hasuraServiceFromServices.getData(data);
+		let result = response?.data?.users;
+		let mappedResponse = result;
+		const count = response?.data?.users_aggregate?.aggregate?.count;
+		const totalPages = Math.ceil(count / limit);
+		if (!mappedResponse || mappedResponse.length < 1) {
+			return resp.status(200).send({
+				success: false,
+				status: 'Not Found',
+				message: 'Beneficiaries Not Found',
+				data: {},
+			});
+		} else {
+			return resp.status(200).json({
+				success: true,
+				message: 'Benificiaries found success!',
+				data: {
+					totalCount: count,
+					data: mappedResponse?.map((e) => ({
+						...e,
+						['program_beneficiaries']:
+							e?.['program_beneficiaries']?.[0],
+					})),
+					limit,
+					currentPage: page,
+					totalPages: `${totalPages}`,
+				},
+			});
+		}
+	}
 	public async findAll(body: any, req: any, resp: any) {
 		const user = await this.userService.ipUserInfo(req);
 		if (!user?.data?.id) {
@@ -112,12 +225,11 @@ export class BeneficiariesService {
 		}
 		const status = body?.status;
 		const sortType = body?.sortType ? body?.sortType : 'desc';
-		const page = body?.page ? body?.page : '1';
-		const limit = body?.limit ? body?.limit : '10';
-		let offset = 0;
-		if (page > 1 && limit) {
-			offset = parseInt(limit) * (page - 1);
-		}
+		const page = isNaN(body.page) ? 1 : parseInt(body.page);
+		const limit = isNaN(body.limit) ? 15 : parseInt(body.limit);
+
+		let offset = page > 1 ? limit * (page - 1) : 0;
+
 		let query = '';
 		if (status && status !== '') {
 			if (status === 'identified') {
@@ -337,6 +449,10 @@ export class BeneficiariesService {
 
 
                   }`,
+			variables: {
+				limit: limit,
+				offset: offset,
+			},
 		};
 		const response = await this.hasuraServiceFromServices.getData(data);
 		let result = response?.data?.users;
