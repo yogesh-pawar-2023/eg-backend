@@ -205,18 +205,24 @@ export class BeneficiariesService {
 		filterQueryArray.push(
 			`{ program_beneficiaries: { facilitator_user: { program_faciltators: { parent_ip: { _eq: "${user?.data?.program_users[0]?.organisation_id}" } } } } }`,
 		);
-		if (body?.district && body?.district !== '') {
-			filterQueryArray.push(`{district:{_eq:${body?.district}}}`);
+		if (body?.district && body?.district.length > 0) {
+			filterQueryArray.push(
+				`{district:{_in: ${JSON.stringify(body?.district)}}}`,
+			);
 		}
 
-		if (body?.block && body?.block !== '') {
-			filterQueryArray.push(`{block:{_eq:${body?.block}}}`);
+		if (body?.block && body?.block.length > 0) {
+			filterQueryArray.push(
+				`{block:{_in: ${JSON.stringify(body?.block)}}}`,
+			);
 		}
 
-		if (body.facilitator && body.facilitator !== '') {
-			filterQueryArray.push(`{
-				program_beneficiaries: {facilitator_id: {_eq: ${body?.facilitator}}}
-			  }`);
+		if (body.facilitator && body.facilitator.length > 0) {
+			filterQueryArray.push(
+				`{program_beneficiaries: {facilitator_id:{_in: ${JSON.stringify(
+					body.facilitator,
+				)}}}}`,
+			);
 		}
 
 		if (status && status !== '') {
