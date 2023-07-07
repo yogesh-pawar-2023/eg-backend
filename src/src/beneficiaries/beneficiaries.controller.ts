@@ -121,12 +121,12 @@ export class BeneficiariesController {
 
 	@Post('/admin/export-csv')
 	@UseGuards(new AuthGuard())
-	async exportFileToCsv(
+	async exportCsv(
 		@Req() request: any,
 		@Body() body: any,
 		@Res() response: any,
 	) {
-		return this.beneficiariesService.exportFileToCsv(
+		return this.beneficiariesService.exportCsv(
 			request,
 			body,
 			response,

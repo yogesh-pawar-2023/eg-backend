@@ -47,7 +47,7 @@ export class BeneficiariesService {
 		'updated_by',
 	];
 
-	async exportFileToCsv(req: any, body: any, resp: any) {
+	async exportCsv(req: any, body: any, resp: any) {
 		try {
 			const user = await this.userService.ipUserInfo(req);
 
