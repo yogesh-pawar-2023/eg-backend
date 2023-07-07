@@ -118,4 +118,18 @@ export class BeneficiariesController {
 			data: result.data,
 		});
 	}
+
+	@Post('/admin/beneficiary/export-csv')
+	@UseGuards(new AuthGuard())
+	async exportFileToCsv(
+		@Req() request: any,
+		@Body() body: any,
+		@Res() response: any,
+	) {
+		return this.beneficiariesService.exportFileToCsv(
+			request,
+			body,
+			response,
+		);
+	}
 }
