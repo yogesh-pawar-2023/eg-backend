@@ -119,7 +119,7 @@ export class BeneficiariesController {
 		});
 	}
 
-	@Post('/admin/beneficiary/export-csv')
+	@Post('/admin/export-csv')
 	@UseGuards(new AuthGuard())
 	async exportFileToCsv(
 		@Req() request: any,
