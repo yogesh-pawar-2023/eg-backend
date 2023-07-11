@@ -1641,7 +1641,7 @@ export class BeneficiariesService {
 						allDocumentStatus,
 					).every((element: any) => {
 						return (
-							element == 'complete' || element == 'not_applicable'
+							element === 'complete' || element === 'not_applicable'
 						);
 					});
 					const status = await this.statusUpdate(
@@ -1659,7 +1659,7 @@ export class BeneficiariesService {
 				}
 				if (
 					req.enrollment_status == 'applied_but_pending' ||
-					req.enrollment_status == 'enrollment_rejected'
+					req.enrollment_status == 'enrollment_rejected' || req?.enrollment_status == 'not_enrolled'
 				) {
 					myRequest['enrolled_for_board'] = req?.enrolled_for_board;
 					myRequest['enrollment_status'] = req?.enrollment_status;
