@@ -505,7 +505,6 @@ export class UserService {
 		);
 		let result = response?.data?.organisations_by_pk;
 		const mappedResponse = result;
-console.log("mmaped ",mappedResponse)
 		return {
 			statusCode: 200,
 			message: 'Ok.',
@@ -1083,12 +1082,10 @@ console.log("mmaped ",mappedResponse)
 
 		// Calling hasura common method find all
 		const data_exist = await this.hasuraService.findAll(tableName, req);
-		console.log("yog data exist",data_exist)
 		let response = data_exist?.data?.users;
 
 		// Check wheather user is exist or not based on response
 		if (response && response.length > 0) {
-			console.log("inside if confition")
 			return {
 				status: 422,
 				message: 'User exist',
