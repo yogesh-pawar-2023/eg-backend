@@ -1721,8 +1721,7 @@ export class BeneficiariesService {
 							request,
 						);
 					} else if (
-						updatedUser?.program_beneficiaries
-							?.enrollment_aadhaar_no === updatedUser?.aadhar_no
+						req?.enrollment_aadhaar_no === updatedUser?.aadhar_no
 					) {
 						const status = await this.statusUpdate(
 							{
