@@ -13,7 +13,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 	UsePipes,
-	ValidationPipe
+	ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { lastValueFrom, map } from 'rxjs';
