@@ -1,19 +1,19 @@
 import { HttpService } from '@nestjs/axios';
 import {
-    Body,
-    Controller,
-    Get,
-    HttpCode,
-    Param,
-    Post,
-    Put,
-    Query,
-    Req,
-    Res,
-    UseGuards,
-    UseInterceptors,
-    UsePipes,
-    ValidationPipe
+	Body,
+	Controller,
+	Get,
+	HttpCode,
+	Param,
+	Post,
+	Put,
+	Query,
+	Req,
+	Res,
+	UseGuards,
+	UseInterceptors,
+	UsePipes,
+	ValidationPipe
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { lastValueFrom, map } from 'rxjs';
@@ -139,6 +139,7 @@ export class UserController {
 	}
 
 	@Get('/organization/:id')
+	@UseGuards(new AuthGuard())
 	organizationInfo(@Param('id') id: string) {
 		return this.userService.organizationInfo(id);
 	}
