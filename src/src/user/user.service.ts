@@ -150,17 +150,33 @@ export class UserService {
 
 	public async ipUserInfo(request: any) {
 		let userData = null;
+		let bearerToken = null;
+		let bearerTokenTemp = null;
 
 		// Get userid from  auth/login jwt token
 		const authToken = request?.headers?.authorization;
 		const authTokenTemp = request?.headers?.authorization.split(' ');
 
-		// Check if token is present as Bearer token
+		// If Bearer word not found in auth header value
 		if (authTokenTemp[0] !== 'Bearer') {
 			return userData;
 		}
+		// Get trimmed Bearer token value by skipping Bearer value
+		else {
+			bearerToken = authToken.trim().substr(7, authToken.length).trim();
+		}
 
-		if (!authTokenTemp[1]) {
+		// If Bearer token value is not passed
+		if (!bearerToken) {
+			return userData;
+		}
+		// Lets split token by dot (.)
+		else {
+			bearerTokenTemp = bearerToken.split('.');
+		}
+
+		// Since JWT has three parts - seperated by dots(.), lets split token
+		if (bearerTokenTemp.length <3) {
 			return userData;
 		}
 
@@ -489,7 +505,7 @@ export class UserService {
 		);
 		let result = response?.data?.organisations_by_pk;
 		const mappedResponse = result;
-
+console.log("mmaped ",mappedResponse)
 		return {
 			statusCode: 200,
 			message: 'Ok.',
@@ -1067,10 +1083,12 @@ export class UserService {
 
 		// Calling hasura common method find all
 		const data_exist = await this.hasuraService.findAll(tableName, req);
+		console.log("yog data exist",data_exist)
 		let response = data_exist?.data?.users;
 
 		// Check wheather user is exist or not based on response
 		if (response && response.length > 0) {
+			console.log("inside if confition")
 			return {
 				status: 422,
 				message: 'User exist',

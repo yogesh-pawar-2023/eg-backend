@@ -1636,24 +1636,10 @@ export class BeneficiariesService {
 				}
 				if (
 					req.enrollment_status == 'applied_but_pending' ||
-					req.enrollment_status == 'rejected'
+					req.enrollment_status == 'enrollment_rejected'
 				) {
 					myRequest['enrolled_for_board'] = req?.enrolled_for_board;
 					myRequest['enrollment_status'] = req?.enrollment_status;
-				}
-				if (req.enrollment_status == 'other') {
-					let subject;
-					if (req.subjects) {
-						subject = JSON.stringify(req.subjects).replace(
-							/"/g,
-							'\\"',
-						);
-					}
-					myRequest = {
-						...req,
-						...(req.subjects && { subjects: subject }),
-						enrollment_status: req?.enrollment_status,
-					};
 				}
 				await this.hasuraService.q(
 					tableName,
