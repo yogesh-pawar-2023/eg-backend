@@ -1677,17 +1677,21 @@ export class BeneficiariesService {
 						//delete document from s3 bucket
 						await this.s3Service.deletePhoto(documentDetails?.name);
 					}
-					const allDocumentStatus = JSON.parse(
+					const allDocumentStatus =
 						beneficiaryUser?.program_beneficiaries
-							?.documents_status,
-					);
-					const allDocumentsCompleted = Object.values(
-						allDocumentStatus,
-					).every((element: any) => {
-						return (
-							element === 'complete' || element === 'not_applicable'
-						);
-					});
+							?.documents_status;
+
+					let allDocumentsCompleted = false;
+					if (allDocumentStatus && allDocumentStatus !== null) {
+						allDocumentsCompleted = Object.values(
+							JSON.parse(allDocumentStatus),
+						).every((element: any) => {
+							return (
+								element === 'complete' ||
+								element === 'not_applicable'
+							);
+						});
+					}
 					const status = await this.statusUpdate(
 						{
 							user_id: req.id,
