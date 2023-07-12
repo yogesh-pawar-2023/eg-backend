@@ -47,6 +47,37 @@ export class BeneficiariesService {
 		'updated_by',
 	];
 
+	async isEnrollmentNumberExists(beneficiaryId: string, body: any) {
+		const query = `
+				query MyQuery {
+					program_beneficiaries_aggregate(where: {enrollment_number: {_eq: ${body.enrollment_number}}, id: {_neq: ${beneficiaryId}}}) {
+						aggregate {
+							count
+						}
+					}
+				}
+			`;
+
+		const data_exist = (
+			await this.hasuraServiceFromServices.getData({ query })
+		)?.data?.program_beneficiaries_aggregate;
+
+		// Check wheather user is exist or not based on response
+		if (data_exist && data_exist.aggregate.count > 0) {
+			return {
+				success: false,
+				message: 'Enrollment number exist!',
+				isUserExist: true,
+			};
+		} else {
+			return {
+				success: true,
+				message: 'Enrollment number not exist',
+				isUserExist: false,
+			};
+		}
+	}
+
 	async exportCsv(req: any, body: any, resp: any) {
 		try {
 			const user = await this.userService.ipUserInfo(req);
@@ -1546,6 +1577,18 @@ export class BeneficiariesService {
 				break;
 			}
 			case 'edit_enrollement': {
+				// Check enrollment_number duplication
+				if (req.enrollment_number) {
+					const enrollmentExists =
+						await this.isEnrollmentNumberExists(
+							req.id,
+							req,
+						);
+					if (enrollmentExists.isUserExist) {
+						return response.status(422).json(enrollmentExists);
+					}
+				}
+
 				// Update enrollement data in Beneficiaries table
 				const userArr =
 					PAGE_WISE_UPDATE_TABLE_DETAILS.edit_enrollement
