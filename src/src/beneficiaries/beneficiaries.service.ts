@@ -829,6 +829,7 @@ export class BeneficiariesService {
 		if (
 			body.status !== 'dropout' &&
 			body.status !== 'rejected' &&
+			body.status !== 'enrolled' &&
 			updatedUser?.program_beneficiaries?.status == 'duplicated'
 		) {
 			return {
