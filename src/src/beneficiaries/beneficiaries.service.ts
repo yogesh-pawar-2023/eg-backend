@@ -13,7 +13,6 @@ import { HasuraService } from '../hasura/hasura.service';
 import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { KeycloakService } from '../services/keycloak/keycloak.service';
-import { log } from 'util';
 @Injectable()
 export class BeneficiariesService {
 	public url = process.env.HASURA_BASE_URL;
@@ -830,6 +829,7 @@ export class BeneficiariesService {
 		if (
 			body.status !== 'dropout' &&
 			body.status !== 'rejected' &&
+			body.status !== 'enrolled' &&
 			updatedUser?.program_beneficiaries?.status == 'duplicated'
 		) {
 			return {
@@ -1634,10 +1634,33 @@ export class BeneficiariesService {
 						//delete document from s3 bucket
 						await this.s3Service.deletePhoto(documentDetails?.name);
 					}
+					const allDocumentStatus = JSON.parse(
+						beneficiaryUser?.program_beneficiaries
+							?.documents_status,
+					);
+					const allDocumentsCompleted = Object.values(
+						allDocumentStatus,
+					).every((element: any) => {
+						return (
+							element === 'complete' || element === 'not_applicable'
+						);
+					});
+					const status = await this.statusUpdate(
+						{
+							user_id: req.id,
+							status: allDocumentsCompleted
+								? 'ready_to_enrolled'
+								: 'identified',
+							reason_for_status_update: allDocumentsCompleted
+								? 'documents_completed'
+								: 'identified',
+						},
+						request,
+					);
 				}
 				if (
 					req.enrollment_status == 'applied_but_pending' ||
-					req.enrollment_status == 'enrollment_rejected'
+					req.enrollment_status == 'enrollment_rejected' 
 				) {
 					myRequest['enrolled_for_board'] = req?.enrolled_for_board;
 					myRequest['enrollment_status'] = req?.enrollment_status;
