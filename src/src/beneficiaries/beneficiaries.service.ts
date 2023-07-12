@@ -1659,8 +1659,7 @@ export class BeneficiariesService {
 				}
 				if (
 					req.enrollment_status == 'applied_but_pending' ||
-					req.enrollment_status == 'enrollment_rejected' ||
-					req?.enrollment_status == 'not_enrolled'
+					req.enrollment_status == 'enrollment_rejected' 
 				) {
 					myRequest['enrolled_for_board'] = req?.enrolled_for_board;
 					myRequest['enrollment_status'] = req?.enrollment_status;
