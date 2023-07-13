@@ -4,9 +4,8 @@ import { createObjectCsvStringifier } from 'csv-writer';
 import jwt_decode from 'jwt-decode';
 import { UserService } from 'src/user/user.service';
 import { EnumService } from '../enum/enum.service';
-import { HasuraService } from '../services/hasura/hasura.service';
+import { HasuraService, HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { S3Service } from '../services/s3/s3.service';
-import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 @Injectable()
 export class FacilitatorService {
 	constructor(
@@ -788,6 +787,10 @@ export class FacilitatorService {
 					tableName,
 					{
 						...body,
+						qualification_reference_document_id:
+							body.qualification_reference_document_id
+								? body.qualification_reference_document_id
+								: null,
 						id: qualificationDetails?.id ?? null,
 						user_id: id,
 					},
