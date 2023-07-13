@@ -782,19 +782,6 @@ export class FacilitatorService {
 
 		if (keyExist.length) {
 			const tableName = 'qualifications';
-			console.log(
-				'my query',
-				await this.hasuraService.q(
-					tableName,
-					{
-						...body,
-						id: qualificationDetails?.id ?? null,
-						user_id: id,
-					},
-					qualificationsArr,
-					true,
-				),
-			);
 			newCreatedQualificationDetails = (
 				await this.hasuraService.q(
 					tableName,
