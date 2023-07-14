@@ -915,7 +915,7 @@ export class FacilitatorService {
 				);
 				if (userExist.length > 0 && isDuplicateMobile) {
 					return response.status(422).send({
-						success: true,
+						success: false,
 						message: 'Mobile Number Already Exist',
 						data: {},
 					});
@@ -993,7 +993,7 @@ export class FacilitatorService {
 				const isDuplicateAdhar=userExist.some((data)=>data.id!==id)
 				if(userExist.length>0 && isDuplicateAdhar){
 					return response.status(422).send({
-						success: true,
+						success: false,
 						message: 'Aadhaar Number Already Exist',
 						data: {},
 					});
