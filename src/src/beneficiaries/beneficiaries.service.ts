@@ -92,6 +92,9 @@ export class BeneficiariesService {
 						first_name
 						last_name
 						dob
+						aadhar_no
+						aadhar_verified
+						aadhaar_verification_mode
 						village
 						mobile
 						block
@@ -124,6 +127,9 @@ export class BeneficiariesService {
 					{ id: 'mobile', title: 'Mobile Number' },
 					{ id: 'status', title: 'Status' },
 					{ id: 'enrollment_number', title: 'Enrollment Number' },
+					{ id: 'aadhar_no', title: 'Aadhaar Number' },
+					{ id: 'aadhar_verified', title: 'Aadhaar Number Verified' },
+					{ id: 'aadhaar_verification_mode', title: 'Aadhaar Verification Mode' },
 				],
 			});
 
@@ -145,6 +151,9 @@ export class BeneficiariesService {
 				dataObject['enrollment_number'] =
 					data?.program_beneficiaries[0]?.enrollment_number;
 				records.push(dataObject);
+				dataObject['aadhar_no']=data?.aadhar_no; 
+				dataObject['aadhar_verified']=data?.aadhar_verified ? data?.aadhar_verified:'no';
+				dataObject['aadhaar_verification_mode']=data?.aadhaar_verification_mode;
 			}
 			let fileName = `${
 				user?.data?.first_name + '_' + user?.data?.last_name

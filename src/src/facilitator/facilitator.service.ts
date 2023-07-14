@@ -1110,6 +1110,9 @@ export class FacilitatorService {
 						last_name
 						district
 						mobile
+						aadhar_no
+						aadhar_verified
+						aadhaar_verification_mode
 						block
 						gender
 						district
@@ -1130,6 +1133,9 @@ export class FacilitatorService {
 					{ id: 'mobile', title: 'Mobile Number' },
 					{ id: 'status', title: 'Status' },
 					{ id: 'gender', title: 'Gender' },
+					{ id: 'aadhar_no', title: 'Aadhaar Number' },
+					{ id: 'aadhar_verified', title: 'Aadhaar Number Verified' },
+					{ id: 'aadhaar_verification_mode', title: 'Aadhaar Verification Mode' },
 				],
 			});
 
@@ -1142,6 +1148,9 @@ export class FacilitatorService {
 				dataObject['mobile'] = data?.mobile;
 				dataObject['status'] = data?.program_faciltators[0]?.status;
 				dataObject['gender'] = data?.gender;
+				dataObject['aadhar_no']=data?.aadhar_no; 
+				dataObject['aadhar_verified']=data?.aadhar_verified ? data?.aadhar_verified:'no';
+				dataObject['aadhaar_verification_mode']=data?.aadhaar_verification_mode;
 				records.push(dataObject);
 			}
 			let fileName = `${decoded?.name.replace(' ', '_')}_${new Date()
