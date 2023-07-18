@@ -756,11 +756,14 @@ export class UserService {
 		  interviews {
 			id
 			owner_user_id
-			end_date_time
+			end_time
 			comment
+            date
+      		interviewer_name
+      		reminder
 			created_at
 			created_by
-			start_date_time
+			start_time
 			status
 			title
 			updated_at
