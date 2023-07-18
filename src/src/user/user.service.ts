@@ -758,9 +758,9 @@ export class UserService {
 			owner_user_id
 			end_time
 			comment
-            date
-      		interviewer_name
-      		reminder
+			date
+			interviewer_name
+			reminder
 			created_at
 			created_by
 			start_time
