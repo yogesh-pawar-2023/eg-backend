@@ -209,25 +209,28 @@ export class FacilitatorService {
 						}
 						interviews {
 							id
-							owner_user_id
-							end_date_time
-							comment
-							created_at
-							created_by
-							start_date_time
-							status
 							title
-							updated_at
-							updated_by
 							user_id
+							owner_user_id
+							date
+							start_time
+							end_time
+							interviewer_name
+							status
+							comment
+							reminder
 							location_type
 							location
+							created_at
+							created_by
+							updated_at
+							updated_by
 							owner {
-							first_name
-							last_name
-							id
+							  first_name
+							  last_name
+							  id
 							}
-						}
+						  }
 						events {
 							context
 							context_id
@@ -1412,27 +1415,30 @@ export class FacilitatorService {
               updated_by
             }
           }
-          interviews {
-            id
-            owner_user_id
-            end_date_time
-            comment
-            created_at
-            created_by
-            start_date_time
-            status
-            title
-            updated_at
-            updated_by
-            user_id
-            location_type
-            location
-            owner {
-              first_name
-              last_name
-              id
-            }
-          }
+		  interviews {
+			id
+			title
+			user_id
+			owner_user_id
+			date
+			start_time
+			end_time
+			interviewer_name
+			status
+			comment
+			reminder
+			location_type
+			location
+			created_at
+			created_by
+			updated_at
+			updated_by
+			owner {
+			  first_name
+			  last_name
+			  id
+			}
+		  }
           events {
             context
             context_id
