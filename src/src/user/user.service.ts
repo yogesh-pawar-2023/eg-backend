@@ -755,22 +755,22 @@ export class UserService {
 		  }
 		  interviews {
 			id
-			owner_user_id
-			end_time
-			comment
-			date
-			interviewer_name
-			reminder
-			created_at
-			created_by
-			start_time
-			status
 			title
-			updated_at
-			updated_by
 			user_id
+			owner_user_id
+			date
+			start_time
+			end_time
+			interviewer_name
+			status
+			comment
+			reminder
 			location_type
 			location
+			created_at
+			created_by
+			updated_at
+			updated_by
 			owner {
 			  first_name
 			  last_name
