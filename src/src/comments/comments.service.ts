@@ -55,7 +55,7 @@ export class CommentsService {
 	async findAll(request, context, context_id, resp) {
 		const data = {
 			query: `query MyQuery {
-				        comments(where: {_and:[{context:{_eq:"${context}"}},{context_id:{_eq:${context_id}}}] }){
+				        comments(where: {_and:[{context:{_eq:"${context}"}},{context_id:{_eq:${context_id}}}]},order_by:{created_datetime:desc}){
                   id
                   user_id
                   comment
