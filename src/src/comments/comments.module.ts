@@ -13,6 +13,6 @@ import { CommentsService } from './comments.service';
 })
 export class CommentsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthMiddleware).forRoutes('*');
+		consumer.apply(AuthMiddleware).forRoutes(CommentsController);
 	}
 }

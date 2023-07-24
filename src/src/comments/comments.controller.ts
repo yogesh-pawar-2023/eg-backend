@@ -51,8 +51,6 @@ export class CommentsController {
 	) {
 		const result: any = await this.commentsService.findOne(
 			+id,
-			context_id,
-			context,
 		);
 		if (result?.data?.comments.length > 0) {
 			return response.status(200).json({
@@ -73,16 +71,12 @@ export class CommentsController {
 	@UseGuards(new AuthGuard())
 	update(
 		@Param('id') id: number,
-		@Param('context') context: string,
-		@Param('context_id') context_id: number,
 		@Req() request: any,
 		@Res() response: Response,
 		@Body() body: UpdateCommentDto,
 	) {
 		return this.commentsService.update(
 			id,
-			context,
-			context_id,
 			body,
 			request,
 			response,

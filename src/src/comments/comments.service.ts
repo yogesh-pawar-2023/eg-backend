@@ -55,24 +55,24 @@ export class CommentsService {
 	async findAll(request, context, context_id, resp) {
 		const data = {
 			query: `query MyQuery {
-        comments(where: {_and: {context: {_eq: "${context}"}, context_id: {_eq: ${context_id}}}}){
-          id
-          user_id
-          comment
-          context
-          context_id
-          created_by
-          created_datetime
-          updated_by
-          updated_datetime
-          status
-          user_details{
-           first_name
-           last_name
-           id  
-          }
-        }
-      }`,
+				        comments(where: {_and:[{context:{_eq:"${context}"}},{context_id:{_eq:${context_id}}}] }){
+                  id
+                  user_id
+                  comment
+                  context
+                  context_id
+                  created_by
+                  created_datetime
+                  updated_by
+                  updated_datetime
+                  status
+                  user_details{
+                    first_name
+                    last_name
+                    id  
+                  }
+                }
+              }`,
 		};
 		const response = await this.hasuraServiceFromServices.getData(data);
 		let result = response?.data?.comments;
@@ -92,27 +92,27 @@ export class CommentsService {
 		}
 	}
 
-	async findOne(id: number, context_id: any, context: any) {
+	async findOne(id: number) {
 		const data = {
 			query: `query MyQuery {
-        comments(where: {_and: {id: {_eq: ${id}}, context_id: {_eq:${context_id}}}}){
-          id
-          user_id
-          comment
-          context
-          context_id
-          created_by
-          created_datetime
-          updated_by
-          updated_datetime
-          status
-          user_details{
-           first_name
-           last_name
-           id  
-          }
-          }
-      }`,
+                comments(where: {id: {_eq: ${id}}}){
+                  id
+                  user_id
+                  comment
+                  context
+                  context_id
+                  created_by
+                  created_datetime
+                  updated_by
+                  updated_datetime
+                  status
+									user_details{
+                    first_name
+                    last_name
+                    id  
+                  }
+                }
+              }`,
 		};
 		const result = await this.hasuraServiceFromServices.getData(data);
 		return result;
@@ -120,8 +120,6 @@ export class CommentsService {
 
 	async update(
 		id: number,
-		context: any,
-		context_id: number,
 		body: any,
 		request: any,
 		response: any,
@@ -129,7 +127,7 @@ export class CommentsService {
 		const user_Id = request.mw_userid;
 		let updatedComment = {};
 		const tableName = 'comments';
-		const result = await this.findOne(id, context_id, context);
+		const result = await this.findOne(id);
 		//if logged user and commented user is same then only able to update comment else not
 		if (
 			result.data.comments[0] &&
@@ -145,7 +143,7 @@ export class CommentsService {
 			if (updatedComment) {
 				return response.status(200).json({
 					success: true,
-					message: 'Comment Updated successfully!',
+					message: 'Comment Updated Successfully!',
 					data: updatedComment,
 				});
 			} else {
@@ -158,7 +156,7 @@ export class CommentsService {
 		} else {
 			return response.status(400).json({
 				success: false,
-				message: `You Are Not Right Person To Update Comment`,
+				message: `Comment Not Found`,
 				data: {},
 			});
 		}
@@ -174,7 +172,7 @@ export class CommentsService {
 		const user_Id = request.mw_userid;
 		let deleteComment = {};
 		const tableName = 'comments';
-		const commentData = await this.findOne(id, context_id, context);
+		const commentData = await this.findOne(id);
 		//if logged user and commented user is same then only able to delete comment else not
 		if (
 			commentData?.data?.comments[0] &&
@@ -186,7 +184,7 @@ export class CommentsService {
 			if (deleteComment) {
 				return response.status(200).json({
 					success: true,
-					message: 'Comment Delete successfully!',
+					message: 'Comment Delete Successfully!',
 					data: deleteComment,
 				});
 			} else {
@@ -199,7 +197,7 @@ export class CommentsService {
 		} else {
 			return response.status(400).json({
 				success: false,
-				message: `You Are Not Right Person To Delete Comment`,
+				message: `Comment Not Found`,
 				data: {},
 			});
 		}
