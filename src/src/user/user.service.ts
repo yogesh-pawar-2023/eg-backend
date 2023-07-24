@@ -753,33 +753,32 @@ export class UserService {
 			  path
 			}
 		  }
-		    attendances {
-			  id
-			  context
-			  rsvp
-			  date_time
-			  context_id
-			  created_by
-			  created_at
-			  fa_is_processed
-			  id
-			  rsvp
-			  status
-			  updated_by
-			  user_id
-			event {
-			  id
-			  start_date
-			  start_time 
-			  end_date
-			  end_time
-			  location
-			  location_type
-			  master_trainer
-			  name
-			  reminders
-			
-			}
+          attendances {
+            id
+            context
+            rsvp
+            date_time
+            context_id
+            created_by
+            created_at
+            fa_is_processed
+            id
+            rsvp
+            status
+            updated_by
+            user_id
+            event {
+              id
+              start_date
+              start_time 
+              end_date
+              end_time
+              location
+              location_type
+              master_trainer
+              name
+              reminders
+            }
 		  }
 		  interviews {
 			id
