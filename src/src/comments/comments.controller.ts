@@ -46,8 +46,6 @@ export class CommentsController {
 	async findOne(
 		@Param('id') id: string,
 		@Res() response: Response,
-		@Param('context') context: string,
-		@Param('context_id') context_id: number,
 	) {
 		const result: any = await this.commentsService.findOne(
 			+id,
@@ -87,15 +85,11 @@ export class CommentsController {
 	@UseGuards(new AuthGuard())
 	remove(
 		@Param('id') id: number,
-		@Param('context') context: string,
-		@Param('context_id') context_id: number,
 		@Req() request: any,
 		@Res() response: Response,
 	) {
 		return this.commentsService.remove(
 			id,
-			context,
-			context_id,
 			request,
 			response,
 		);

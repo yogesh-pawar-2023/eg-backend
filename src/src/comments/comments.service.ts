@@ -164,8 +164,6 @@ export class CommentsService {
 
 	async remove(
 		id: number,
-		context: any,
-		context_id: number,
 		request: any,
 		response: any,
 	) {
