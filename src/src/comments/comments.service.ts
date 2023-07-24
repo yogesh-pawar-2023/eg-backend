@@ -66,6 +66,11 @@ export class CommentsService {
           updated_by
           updated_datetime
           status
+		  user_details{
+			first_name
+			last_name
+			id  
+		  }
         }
       }`,
 		};
@@ -101,6 +106,11 @@ export class CommentsService {
           updated_by
           updated_datetime
           status
+		  user_details{
+			first_name
+			last_name
+			id  
+		  }
           }
       }`,
 		};
