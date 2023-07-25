@@ -86,7 +86,10 @@ export class FacilitatorService {
 								},
 								{
 									attendances_aggregate: {
-										count: { predicate: {_eq: 0} }
+										count: {
+											predicate: {_eq: 0},
+											filter: {event: {type: {_eq: "${body.type}"}}}
+										}
 									}
 								}
 							]
@@ -108,7 +111,10 @@ export class FacilitatorService {
 								},
 								{
 									attendances_aggregate: {
-										count: { predicate: {_eq: 0} }
+										count: {
+											predicate: {_eq: 0},
+											filter: {event: {type: {_eq: "${body.type}"}}}
+										}
 									}
 								}
 							]
@@ -501,8 +507,6 @@ export class FacilitatorService {
 			) {
 				body.alternative_mobile_number = null;
 			}
-			body.mobile = body.mobile;
-			body.alternative_mobile_number = body.alternative_mobile_number;
 			await this.hasuraService.q(tableName, body, userArr, true);
 		}
 
@@ -991,17 +995,6 @@ export class FacilitatorService {
 				break;
 			}
 			case 'aadhaar_details': {
-				let isAdharExist= await this.hasuraService.findAll('users', {aadhar_no:body?.aadhar_no});
-				let userExist = isAdharExist?.data?.users;
-				const isDuplicateAdhar=userExist.some((data)=>data.id!==id)
-				if(userExist.length>0 && isDuplicateAdhar){
-					return response.status(422).send({
-						success: false,
-						message: 'Aadhaar Number Already Exist',
-						data: {},
-					});
-				}
-
 				const result = await this.updateAadhaarDetails(id, body);
 				if (result && !result.success) {
 					return response.status(result.statusCode).json({
