@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthGuard } from 'src/modules/auth/auth.guard';
 import { CommentsService } from './comments.service';
@@ -10,6 +10,7 @@ export class CommentsController {
 
 	@Post('/:context/:context_id')
 	@UseGuards(new AuthGuard())
+	@UsePipes(ValidationPipe)
 	create(
 		@Body() body: CreateCommentDto,
 		@Req() request: any,
@@ -67,6 +68,7 @@ export class CommentsController {
 
 	@Patch('/:context/:context_id/:id')
 	@UseGuards(new AuthGuard())
+	@UsePipes(ValidationPipe)
 	update(
 		@Param('id') id: number,
 		@Req() request: any,

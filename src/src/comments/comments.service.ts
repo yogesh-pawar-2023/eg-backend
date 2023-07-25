@@ -55,24 +55,24 @@ export class CommentsService {
 	async findAll(request, context, context_id, resp) {
 		const data = {
 			query: `query MyQuery {
-				        comments(where: {_and:[{context:{_eq:"${context}"}},{context_id:{_eq:${context_id}}}]},order_by:{created_datetime:desc}){
-                  id
-                  user_id
-                  comment
-                  context
-                  context_id
-                  created_by
-                  created_datetime
-                  updated_by
-                  updated_datetime
-                  status
-                  user_details{
-                    first_name
-                    last_name
-                    id  
-                  }
-                }
-              }`,
+				comments(where: {_and:[{context:{_eq:"${context}"}},{context_id:{_eq:${context_id}}}]},order_by:{created_datetime:desc}){
+					id
+					user_id
+					comment
+					context
+					context_id
+					created_by
+					created_datetime
+					updated_by
+					updated_datetime
+					status
+					user_details{
+						first_name
+						last_name
+						id  
+					}
+				}
+			}`,
 		};
 		const response = await this.hasuraServiceFromServices.getData(data);
 		let result = response?.data?.comments;
@@ -95,24 +95,24 @@ export class CommentsService {
 	async findOne(id: number) {
 		const data = {
 			query: `query MyQuery {
-                comments(where: {id: {_eq: ${id}}}){
-                  id
-                  user_id
-                  comment
-                  context
-                  context_id
-                  created_by
-                  created_datetime
-                  updated_by
-                  updated_datetime
-                  status
-									user_details{
-                    first_name
-                    last_name
-                    id  
-                  }
-                }
-              }`,
+				comments(where: {id: {_eq: ${id}}}){
+					id
+					user_id
+					comment
+					context
+					context_id
+					created_by
+					created_datetime
+					updated_by
+					updated_datetime
+					status
+					user_details{
+						first_name
+						last_name
+						id  
+					}
+				}
+			}`,
 		};
 		const result = await this.hasuraServiceFromServices.getData(data);
 		return result;
