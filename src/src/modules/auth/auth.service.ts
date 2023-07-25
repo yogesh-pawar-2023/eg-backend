@@ -451,7 +451,20 @@ export class AuthService {
 		);
 	}
 	public async register(body, response) {
-		console.log('body', body);
+		if (body.role === 'facilitator') {
+			let isMobileExist = await this.hasuraService.findAll('users', {
+				mobile: body?.mobile,
+			});
+			let userExist = isMobileExist?.data?.users;
+
+			if (userExist.length > 0) {
+				return response.status(422).send({
+					success: false,
+					message: 'Mobile Number Already Exist',
+					data: {},
+				});
+			}
+		}
 
 		// Generate random password
 		const password = `@${this.userHelperService.generateRandomPassword()}`;
