@@ -52,7 +52,7 @@ export class BeneficiariesService {
 	async isEnrollmentNumberExists(beneficiaryId: string, body: any) {
 		const query = `
 				query MyQuery {
-					program_beneficiaries_aggregate(where: {enrollment_number: {_eq: ${body.enrollment_number}}, id: {_neq: ${beneficiaryId}}}) {
+					program_beneficiaries_aggregate(where: {enrollment_number: {_eq: ${body.enrollment_number}}, user_id: {_neq: ${beneficiaryId}}}) {
 						aggregate {
 							count
 						}
