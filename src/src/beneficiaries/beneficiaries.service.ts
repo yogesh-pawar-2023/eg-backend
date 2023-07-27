@@ -182,6 +182,7 @@ export class BeneficiariesService {
 	async exportSubjectCsv(req: any, body: any, resp: any) {
 		try {
 			const user = await this.userService.ipUserInfo(req);
+
 			if (!user?.data?.program_users?.[0]?.organisation_id) {
 				return resp.status(404).send({
 					success: false,
@@ -189,6 +190,7 @@ export class BeneficiariesService {
 					data: {},
 				});
 			}
+			
 			const sortType = body?.sortType ? body?.sortType : 'desc';
 			let status = body?.status;
 			let filterQueryArray = [];
@@ -234,11 +236,11 @@ export class BeneficiariesService {
 			let filterQuery = '{ _and: [' + filterQueryArray.join(',') + '] }';
 			var data = {
 				query: `query MyQuery {
-				users(where: ${filterQuery},
-                      order_by: {
-                        created_at: ${sortType}
-                      }
-				) {
+					users(where: ${filterQuery},
+						order_by: {
+						created_at: ${sortType}
+						}
+					) {
 					id
 					first_name
 					last_name
@@ -252,19 +254,15 @@ export class BeneficiariesService {
 					facilitator_id
 					status
 					
-				  }
+				  	}
 				}
 			  }`,
 			};
+			
 			const response = await this.hasuraServiceFromServices.getData(data);
 			let result = response?.data?.users;
 			let mappedResponse = result;
-			console.log(
-				'mappedResponse',
-				mappedResponse[1],
-				mappedResponse.length,
-			);
-
+			
 			const sql = `SELECT
 						name,
 						array_agg(id)
@@ -280,10 +278,11 @@ export class BeneficiariesService {
 				this.hasuraServiceFromServices.getFormattedData(subjectGroup);
 			const subjects = {};
 			const subjectHeader = [];
+
 			for (let data of allSubjects) {
 				subjectHeader.push({ id: data.name, title: data.name });
 			}
-
+			//create export table columns list
 			const csvStringifier = createObjectCsvStringifier({
 				header: [
 					{ id: 'name', title: 'Name' },
@@ -292,6 +291,8 @@ export class BeneficiariesService {
 				],
 			});
 			const records = [];
+			// getting subject which Ag ha selected
+
 			for (let data of mappedResponse) {
 				let selectedSubject = JSON.parse(
 					data?.program_beneficiaries[0]?.subjects,
@@ -300,6 +301,7 @@ export class BeneficiariesService {
 				dataObject['name'] = data?.first_name + ' ' + data?.last_name;
 				dataObject['enrolled_for_board'] =
 					data?.program_beneficiaries[0]?.enrolled_for_board;
+				// executing loop for all subject ,check if ag has selected subject then mark "Yes" else "No"
 
 				for (let i = 0; i < allSubjects.length; i++) {
 					if (selectedSubject) {
@@ -307,6 +309,7 @@ export class BeneficiariesService {
 							.replace(/[{}]/g, '')
 							.split(',')
 							.some((e) => selectedSubject.includes(e));
+
 						if (res == true) {
 							dataObject[allSubjects[i].name] = 'yes';
 						} else {
@@ -316,8 +319,10 @@ export class BeneficiariesService {
 						dataObject[allSubjects[i].name] = 'no';
 					}
 				}
+
 				records.push(dataObject);
 			}
+
 			let fileName = `${
 				user?.data?.first_name +
 				'_' +
@@ -330,6 +335,7 @@ export class BeneficiariesService {
 				csvStringifier.stringifyRecords(records);
 			resp.header('Content-Type', 'text/csv');
 			return resp.attachment(fileName).send(fileData);
+			
 		} catch (error) {
 			return resp.status(500).json({
 				success: false,

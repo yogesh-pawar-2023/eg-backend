@@ -62,6 +62,7 @@ export class HasuraService {
 			console.log('get data error', e.message);
 		}
 	}
+	
 	public async executeRawSql(sql: string) {
 		try {
 			let url = this.configService.get<string>('HASURA_SQL_BASE_URL');
@@ -105,6 +106,7 @@ export class HasuraService {
 		}
 		return result;
 	}
+	
 	public async findAll(tableName: String, filters: Object = {}) {
 		let query = '';
 		if (filters) {

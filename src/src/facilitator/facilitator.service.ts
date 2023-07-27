@@ -1224,6 +1224,7 @@ export class FacilitatorService {
 			};
 			const hasuraResponse = await this.hasuraService.getData(data);
 			let allFacilitators = hasuraResponse?.data?.users;
+			// checking allFacilitators ,body.work_experience available or not and body.work_experience is valid string or not 
 			if (
 				allFacilitators &&
 				body.hasOwnProperty('work_experience') &&
