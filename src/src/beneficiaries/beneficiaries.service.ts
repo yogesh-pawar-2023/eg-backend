@@ -9,11 +9,11 @@ import { ConfigService } from '@nestjs/config';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { S3Service } from 'src/services/s3/s3.service';
 import { UserService } from 'src/user/user.service';
+import { EnumService } from '../enum/enum.service';
 import { HasuraService } from '../hasura/hasura.service';
 import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { KeycloakService } from '../services/keycloak/keycloak.service';
-import { EnumService } from '../enum/enum.service';
 @Injectable()
 export class BeneficiariesService {
 	public url = process.env.HASURA_BASE_URL;
@@ -1107,7 +1107,6 @@ export class BeneficiariesService {
 					'type_of_enrollement',
 					'subjects',
 					'program_id',
-					'facilitator_id',
 					'academic_year_id',
 					'payment_receipt_document_id',
 					'enrollment_date',
@@ -1125,7 +1124,6 @@ export class BeneficiariesService {
 					'enrollment_middle_name',
 					'enrollment_last_name',
 					'enrollment_dob',
-					'enrollment_aadhaar_no',
 					'is_eligible',
 				],
 			},
@@ -1352,7 +1350,6 @@ export class BeneficiariesService {
 					PAGE_WISE_UPDATE_TABLE_DETAILS.edit_family
 						.core_beneficiaries;
 				let tableName = 'core_beneficiaries';
-				console.log(beneficiaryUser?.core_beneficiaries?.id);
 				await this.hasuraService.q(
 					tableName,
 					{
@@ -1589,6 +1586,13 @@ export class BeneficiariesService {
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 				let myRequest = {};
+				if(!beneficiaryUser.aadhar_no || beneficiaryUser.aadhar_no=="null"){
+					return response.status(400).send({
+						success: false,
+						message: "Aadhaar Number Is Not Found",
+						data: {},
+					});
+				}
 				if (req.enrollment_status == 'enrolled') {
 					let messageArray = [];
 					let tempArray = [
@@ -1621,6 +1625,16 @@ export class BeneficiariesService {
 									  )
 									: null,
 						};
+						if (req?.enrollment_aadhaar_no && req?.enrollment_aadhaar_no === beneficiaryUser?.aadhar_no) {
+							const status = await this.statusUpdate(
+								{
+									user_id: req.id,
+									status: 'enrolled',
+									reason_for_status_update: 'enrolled',
+								},
+								request,
+							);
+						}
 					}
 				}
 				if (req.enrollment_status == 'not_enrolled') {
@@ -1730,7 +1744,6 @@ export class BeneficiariesService {
 					let tempArray = [
 						'enrollment_first_name',
 						'enrollment_dob',
-						'enrollment_aadhaar_no',
 						'is_eligible',
 					];
 					for (let info of tempArray) {
@@ -1778,18 +1791,7 @@ export class BeneficiariesService {
 							},
 							request,
 						);
-					} else if (
-						req?.enrollment_aadhaar_no === updatedUser?.aadhar_no
-					) {
-						const status = await this.statusUpdate(
-							{
-								user_id: req.id,
-								status: 'enrolled',
-								reason_for_status_update: 'enrolled',
-							},
-							request,
-						);
-					}
+					}  
 				}
 
 				break;
