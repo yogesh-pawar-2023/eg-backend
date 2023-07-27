@@ -1586,10 +1586,13 @@ export class BeneficiariesService {
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 				let myRequest = {};
-				if(!beneficiaryUser.aadhar_no || beneficiaryUser.aadhar_no=="null"){
+				if (
+					!beneficiaryUser.aadhar_no ||
+					beneficiaryUser.aadhar_no == 'null'
+				) {
 					return response.status(400).send({
 						success: false,
-						message: "Aadhaar Number Is Not Found",
+						message: 'Aadhaar Number Not Found',
 						data: {},
 					});
 				}
@@ -1625,7 +1628,11 @@ export class BeneficiariesService {
 									  )
 									: null,
 						};
-						if (req?.enrollment_aadhaar_no && req?.enrollment_aadhaar_no === beneficiaryUser?.aadhar_no) {
+						if (
+							req?.enrollment_aadhaar_no &&
+							req?.enrollment_aadhaar_no ===
+								beneficiaryUser?.aadhar_no
+						) {
 							const status = await this.statusUpdate(
 								{
 									user_id: req.id,
