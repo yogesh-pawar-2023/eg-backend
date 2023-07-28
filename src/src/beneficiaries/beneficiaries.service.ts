@@ -1746,7 +1746,14 @@ export class BeneficiariesService {
 				const programDetails = beneficiaryUser.program_beneficiaries;
 				let tableName = 'program_beneficiaries';
 				let myRequest = {};
-				if (req.enrollment_status == 'enrolled') {
+				if (programDetails?.enrollment_status !== 'enrolled') {
+					return response.status(400).json({
+						success: false,
+						message:
+							'Make Sure Your Enrollement Status is Enrolled',
+						data: {},
+					});
+				} else {
 					let messageArray = [];
 					let tempArray = [
 						'enrollment_first_name',
