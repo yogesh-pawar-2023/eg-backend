@@ -1618,21 +1618,23 @@ export class BeneficiariesService {
 							data: {},
 						});
 					} else {
-						myRequest = {
-							...req,
-							subjects:
-								typeof req.subjects == 'object'
-									? JSON.stringify(req.subjects).replace(
-											/"/g,
-											'\\"',
-									  )
-									: null,
-						};
+						const { edit_page_type, ...copiedRequest } = req;
+
 						if (
 							req?.enrollment_aadhaar_no &&
-							req?.enrollment_aadhaar_no ===
+							req?.enrollment_aadhaar_no ==
 								beneficiaryUser?.aadhar_no
 						) {
+							myRequest = {
+								...copiedRequest,
+								subjects:
+									typeof req.subjects == 'object'
+										? JSON.stringify(req.subjects).replace(
+												/"/g,
+												'\\"',
+										  )
+										: null,
+							};
 							const status = await this.statusUpdate(
 								{
 									user_id: req.id,
