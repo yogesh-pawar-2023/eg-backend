@@ -9,11 +9,11 @@ import { ConfigService } from '@nestjs/config';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { S3Service } from 'src/services/s3/s3.service';
 import { UserService } from 'src/user/user.service';
+import { EnumService } from '../enum/enum.service';
 import { HasuraService } from '../hasura/hasura.service';
 import { UserHelperService } from '../helper/userHelper.service';
 import { HasuraService as HasuraServiceFromServices } from '../services/hasura/hasura.service';
 import { KeycloakService } from '../services/keycloak/keycloak.service';
-import { EnumService } from '../enum/enum.service';
 @Injectable()
 export class BeneficiariesService {
 	public url = process.env.HASURA_BASE_URL;
@@ -303,10 +303,12 @@ export class BeneficiariesService {
 					district
 					block
 					mobile
+					dob
 				    program_beneficiaries {
 					id
 					facilitator_id
 					status
+					enrollment_date
 					
 				  }
 				}
