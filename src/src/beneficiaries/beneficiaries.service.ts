@@ -1601,6 +1601,7 @@ export class BeneficiariesService {
 					let tempArray = [
 						'enrollment_number',
 						'enrollment_status',
+						'enrollment_aadhaar_no',
 						'enrolled_for_board',
 						'subjects',
 						'enrollment_date',
@@ -1643,6 +1644,12 @@ export class BeneficiariesService {
 								},
 								request,
 							);
+						}else {
+							return response.status(400).send({
+								success: false,
+								message: "Enrollment Aadhaar number Not matching with your Aadhaar Number",
+								data: {},
+							});
 						}
 					}
 				}
