@@ -283,6 +283,7 @@ export class BeneficiariesService {
 		}
 
 		let filterQuery = '{ _and: [' + filterQueryArray.join(',') + '] }';
+		//facilitator_user is the relationship of program_beneficiaries.facilitator_id  to  users.id
 		var data = {
 			query: `query MyQuery($limit:Int, $offset:Int) {
 				users_aggregate(where:${filterQuery}) {
